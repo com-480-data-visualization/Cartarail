@@ -64,9 +64,6 @@ More broadly, we also see this visualization as a work of art that expresses a d
 
 ### Exploratory Data Analysis
 
-> Pre-processing of the data set you chose
-> - Show some basic statistics and get insights about the data
-
 The [preprocess](./notebooks/preprocess.ipynb) notebook details the data pre-processing steps needed to extract: 
 - A list of all train stations in Switzerland; 
 - A list of all stations in Lausanne, including metro, bus, and other public transport stops.
@@ -77,11 +74,6 @@ By analyzing the dataset, we confirmed that it contains all the necessary inform
 3. Generate a graph layout using these travel time-based weights, employing a force-directed (or similar) algorithm.
 
 ### Related work
-
-> - What others have already done with the data?
-> - Why is your approach original?
-> - What source of inspiration do you take? Visualizations that you found on other websites or magazines (might be unrelated to your data).
-> - In case you are using a dataset that you have already explored in another context (ML or ADA course, semester project...), you are required to share the report of that work to outline the differences with the submission for this class.
 
 - [Chronotrains](https://www.chronotrains.com/en) provides an interactive visualization of train travel times across Europe. User can select a city and see how far they can travel within a given time. The map remains a standard geographic map with reachable cities marked in green. 
 

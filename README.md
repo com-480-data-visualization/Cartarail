@@ -10,18 +10,7 @@
 
 ## Milestone 1 (21st March, 5pm)
 
-**10% of the final grade**
-
-This is a preliminary milestone to let you set up goals for your final project and assess the feasibility of your ideas.
-Please, fill the following sections about your project.
-
-*(max. 2000 characters per section)*
-
 ### Dataset
-
-> Find a dataset (or multiple) that you will explore. Assess the quality of the data it contains and how much preprocessing / data-cleaning it will require before tackling visualization. We recommend using a standard dataset as this course is not about scraping nor data processing.
->
-> Hint: some good pointers for finding quality publicly available datasets ([Google dataset search](https://datasetsearch.research.google.com/), [Kaggle](https://www.kaggle.com/datasets), [OpenSwissData](https://opendata.swiss/en/), [SNAP](https://snap.stanford.edu/data/) and [FiveThirtyEight](https://data.fivethirtyeight.com/)), you could use also the DataSets proposed by the ENAC (see the Announcements section on Zulip).
 
 #### Source
 
@@ -45,17 +34,15 @@ Specifically, the timetable dataset contains the following 9 sub-datasets:
 
 #### Data Quality
 
-TBA
+The data is high-quality as it is published by the CFF's consumer information department (Systemaufgaben Kundeninformation or SKI) by order of the Swiss Federal Transport Office.
+It is in the same format used by many applications that work with transit systems (e.g. Google Maps), and it contains all the information we need to calculate scheduled travel times.
+It is also regularly updated (published every few days).
 
 ### Problematic
 
-> Frame the general topic of your visualization and the main axis that you want to develop.
-> - What am I trying to show with my visualization?
-> - Think of an overview for the project, your motivation, and the target audience.
-
 #### Motivation
 
-We are used to standard maps where the distance between two locations reflects their physical geographic distance. However, in public transportation, what matters more than physical distance is the ***travel time***. For example, Geneve to Bern (130 km) takes only 2 hours on a direct train, while a shorter route like Lugano to St. Moritz (90 km) takes about 4 hours due to mountainous terrain. What if a map used distance to represent travel time instead of the geographic distance? 
+We are used to standard maps where the distance between two locations reflects their physical geographic distance. However, in public transportation, what matters more than physical distance is the ***travel time***. For example, Genève to Bern (130 km) takes only 2 hours on a direct train, while a shorter route like Lugano to St. Moritz (90 km) takes about 4 hours due to mountainous terrain. What if a map used distance to represent travel time instead of the geographic distance?
 
 #### Objective: Cartogram of Swiss Public Transport Travel Time
 
@@ -70,7 +57,9 @@ If time permits, we will also explore other interesting variables such as commer
 This visualization is designed for both commuters and urban planners:  
 
 - For commuters, our cartogram can assist in planning daily commutes and travel planning; 
-- For urban planners, our cartogram can help to better understand how transport infrastructure impacts mobility by highlighting well-connected areas, transit bottlenecks, and disparities in travel efficiency. 
+- For urban planners, our cartogram can help to better understand how transport infrastructure impacts mobility by highlighting well-connected areas, transit bottlenecks, and disparities in travel efficiency.
+
+More broadly, we also see this visualization as a work of art that expresses a different perspective about time, distance, geography, and travel, and invites the viewer to think about what aspects of life different kinds of maps prioritize and ignore.
 
 #### Development Plan 
 
@@ -97,20 +86,8 @@ TBA.
 - [Cartographic Views of the 2024 US Presidential Election](https://worldmapper.org/us-presidential-election-2024/) which contains a cartogram [US Presidential Election 2024 Results](https://worldmapper.org/maps/us-presidential-election-2024-results/)
 - Design and Implementation of Travel-time Cartograms.
 
-[1] Wang, L., Ding, L., Krisp, J.M. *et al.* Design and Implementation of Travel-time Cartograms.                    *j. Cartogr. Geogr. inf.* **68**, 13–20 (2018). https://doi.org/10.1007/BF03545340
+[1] Wang, L., Ding, L., Krisp, J.M. *et al.* Design and Implementation of Travel-time Cartograms. *J. Cartogr. Geogr. Inf.* **68**, 13–20 (2018). doi:10.1007/BF03545340
 
 ## Milestone 2 (18th April, 5pm)
 
-**10% of the final grade**
-
-
 ## Milestone 3 (30th May, 5pm)
-
-**80% of the final grade**
-
-
-## Late policy
-
-- < 24h: 80% of the grade for the milestone
-- < 48h: 70% of the grade for the milestone
-

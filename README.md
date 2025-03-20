@@ -1,4 +1,4 @@
-# Project of Data Visualization (COM-480)
+# Cartogram of Swiss Public Transport Travel Time (COM-480)
 
 | Student's name | SCIPER |
 | -------------- | ------ |

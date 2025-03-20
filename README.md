@@ -61,19 +61,22 @@ This visualization is designed for both commuters and urban planners:
 
 More broadly, we also see this visualization as a work of art that expresses a different perspective about time, distance, geography, and travel, and invites the viewer to think about what aspects of life different kinds of maps prioritize and ignore.
 
-#### Development Plan 
-
-TBA
 
 ### Exploratory Data Analysis
 
 > Pre-processing of the data set you chose
 > - Show some basic statistics and get insights about the data
 
-TBA
+The [preprocess](./notebooks/preprocess.ipynb) notebook details the data pre-processing steps needed to extract: 
+- A list of all train stations in Switzerland; 
+- A list of all stations in Lausanne, including metro, bus, and other public transport stops.
+
+By analyzing the dataset, we confirmed that it contains all the necessary information for our project. Specifically, we are going to:
+1. Compute the earliest arrival times for all destinations from a given starting location and time. 
+2. Construct a complete graph, where edges represent trips and the weights correspond to travel time (arrival time - departure time).
+3. Generate a graph layout using these travel time-based weights, employing a force-directed (or similar) algorithm.
 
 ### Related work
-
 
 > - What others have already done with the data?
 > - Why is your approach original?
@@ -86,6 +89,10 @@ TBA
 
 - [Worldmapper](worldmapper.org) platform provides some cartographic visualizations of various datasets. One example is the [Cartographic Views of the 2024 US Presidential Election](https://worldmapper.org/us-presidential-election-2024/) which includes [a cartogram of the election results](https://worldmapper.org/maps/us-presidential-election-2024-results/).
 - Ongoing research on travel-time cartograms provides an academic foundation. For example, the study by Wang et al. [1] explores different design methodologies for constructing travel-time cartograms and offers insights for our project. 
+
+Switzerland public transport timetable is widely used for various applications, but as for as we know, no one has applied a cartogram approach to this dataset.
+
+Our approach is original: Chronotrains does not use cartograms, and Worldmapper maps are static and not focused on travel time. We aim to provide read-world usability and interactive exploration with the public transport data. 
 
 [1] Wang, L., Ding, L., Krisp, J.M. *et al.* Design and Implementation of Travel-time Cartograms. *J. Cartogr. Geogr. Inf.* **68**, 13–20 (2018). doi:10.1007/BF03545340
 

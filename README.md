@@ -34,8 +34,8 @@ Specifically, the timetable dataset contains the following 9 sub-datasets:
 
 #### Data Quality
 
-The data is high-quality as it is published by the CFF's consumer information department (Systemaufgaben Kundeninformation or SKI) by order of the Swiss Federal Transport Office.
-It is in the same format used by many applications that work with transit systems (e.g. Google Maps), and it contains all the information we need to calculate scheduled travel times.
+The data is high-quality as it is published by the Customer Information System Tasks (Systemaufgaben Kundeninformation or SKI) business office by order of the Swiss Federal Office of Transport.
+It is in an industry-standard format used by world-wide applications that work with transit systems (e.g. Google Maps), and it contains all the information we need to calculate scheduled travel times.
 It is also regularly updated (published every few days).
 
 ### Problematic

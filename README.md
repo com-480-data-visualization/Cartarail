@@ -90,4 +90,33 @@ Our approach is original: Chronotrains does not use cartograms, and Worldmapper 
 
 ## Milestone 2 (18th April, 5pm)
 
+parts to do
+
+* data processing: given a source and a datetime, compute travel time to all other stations
+  + instead of 10km around Lausanne, what if we keep only the stops that TL lines cover
+  + and the path to get there: what other stations does it pass through
+
+* graph layout algorithm
+  + spring layout. for each vertex, two springs, one connected to its original geographical location with preferred length zero, the other to the starting station with preferred length = travel time.
+  + additional springs to match the actual path
+  + three weights: travel time springs, source geography spring, destination geography springs
+
+* web view
+
+
+classes of interest
+* maps
+* graphs
+* Storytelling with data and Creative coding
+* D3.js
+
+tools
+* force-directed layout (D3 or other)
+* jupyter
+* Python csv library
+
+sketches
+* website skeleton
+
+
 ## Milestone 3 (30th May, 5pm)

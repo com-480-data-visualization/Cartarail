@@ -1,0 +1,21 @@
+{
+  "name": "app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/papaparse": "^5.3.15",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0"
+  },
+  "dependencies": {
+    "@datastructures-js/priority-queue": "^6.3.2",
+    "@types/node": "^22.14.1",
+    "papaparse": "^5.5.2"
+  }
+}

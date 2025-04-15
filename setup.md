@@ -34,4 +34,6 @@
 
 - `public`: assets that can be found by the website
 
-  
+#### For milestone 2
+
+- data: all stations within 2km from the EPFL metro station (for easy and quick computation)

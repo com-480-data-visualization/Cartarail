@@ -25,7 +25,8 @@
             packages =
               (with pkgs; [
                 python312Full
-                typescript
+                nodejs
+                nodePackages.typescript
               ])
               ++ (with pkgs.python312Packages; [
                 jupyter

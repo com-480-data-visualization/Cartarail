@@ -1,3 +1,8 @@
+#### get the dataset
+
+1. `wget https://data.opentransportdata.swiss/dataset/6cca1dfb-e53d-4da8-8d49-4797b3e768e3/resource/e3a4012c-8f45-48f9-b5c9-1515a03ee15e/download/gtfs_fp2025_2025-03-20.zip`
+2. `unzip gtfs_fp2025_2025-03-20.zip -d gtfs_fp2025_2025-03-20`
+
 #### python notebooks / scripts: 
 
 - `pre-filter.ipynb`: from the original dataset, filters and generates sub-datasets for different targets (train, lausanne, epfl). 

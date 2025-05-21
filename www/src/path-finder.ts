@@ -379,4 +379,7 @@ async function ui() {
     }
 }
 
+
+console.log("main.ts is loaded!");
 (async () => { await ui(); })();
+

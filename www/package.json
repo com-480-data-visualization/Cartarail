@@ -20,6 +20,7 @@
     "@types/node": "^22.14.1",
     "d3-force": "^3.0.0",
     "d3-selection": "^3.0.0",
+    "alasql": "^4.6.6",
     "papaparse": "^5.5.2"
   }
 }

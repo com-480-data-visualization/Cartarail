@@ -1,56 +1,83 @@
-// Test the dom tree library. Can be removed.
-const myHeading = document.getElementById("heading");
-if (myHeading) {
-  myHeading.textContent = "hello testing!";
-}
-
-// =====================================================
-
+import alasql from 'alasql';
+import Papa from "papaparse";
 import {
   PriorityQueue,
   ICompare
 } from '@datastructures-js/priority-queue';
 
-import Papa from "papaparse";
-
 // Station, identified by its id in the dataset.
 type Station = string;
 
-interface NextStationRecord {
-  from: Station;
-  to: Station;
-  route_id: string;
+// =========== load data ==========
+
+interface StationTableRecord {
+    stop_id: Station; 
+    stop_name: string;
+    stop_lat: number;
+    stop_lon: number;
 }
 
-interface QueryTableRecord {
-  trip_id: string;
-  arrival_time: string;
-  departure_time: string;
-  stop_sequence: string;
-  station: Station;
-  route_id: string;
-  route_desc: string;
-  route_short_name: string;
-  stop_name: string;
+interface RawTransportTableRecord {
+    start_station: Station; 
+    next_station: Station; 
+    route_id: string; 
+    route_desc: string; 
+    route_short_name: string; 
+    departure_arrival_time: string;
 }
 
-interface StationRecord {
-  station: Station;
-  station_name: string;
+interface TransportTableRecord {
+    start_station: Station; 
+    next_station: Station; 
+    route_id: string; 
+    route_desc: string; 
+    route_short_name: string; 
+    departure_arrival_time: [string, string][];
 }
 
-function loadNextStations(): Promise<Papa.ParseResult<NextStationRecord>> {
-  return fetch("/epfl_next_stations.csv")
+interface WalkTableRecord {
+    start_station: Station; 
+    next_station: Station;
+    walk_time: number;
+}
+
+function parseDepartureArrivalTime(s: string): [string, string][] {
+  try {
+    const jsonCompatible = s
+      .replace(/\(/g, '[')
+      .replace(/\)/g, ']')
+      .replace(/'/g, '"');
+
+    return JSON.parse(jsonCompatible);
+  } catch (err) {
+    console.error('Failed to parse segments:', s, err);
+    return [];
+  }
+}
+
+let allLoaded = false, stationLoaded = false, transportLoaded = false, walkLoaded = false;
+const stationIdMap = new Map<Station, string>(), stationNameMap = new Map<string, Station>();
+
+function loadStationCSVToMap(url: string) {
+  if (stationLoaded) return;
+  return fetch(url)
     .then(response => {
       if (!response.ok) throw new Error("Failed to get the csv file.");
       return response.text();
     })
     .then(csvText => {
-        const res = Papa.parse<NextStationRecord>(csvText, {
+        const res = Papa.parse<StationTableRecord>(csvText, {
         header: true,
         skipEmptyLines: true
       });
       return res;
+    })
+    .then(res => {
+        for (const row of res.data) {
+          stationIdMap.set(row.stop_id, row.stop_name); 
+          stationNameMap.set(row.stop_name, row.stop_id);
+        }
+        stationLoaded = true;
     })
     .catch(error => {
       console.error("Failed to load or parse CSV:", error);
@@ -58,194 +85,270 @@ function loadNextStations(): Promise<Papa.ParseResult<NextStationRecord>> {
     });
 }
 
-function loadQueryTable(): Promise<Papa.ParseResult<QueryTableRecord>> {
-  return fetch("/epfl_query_table.csv")
-    .then(response => {
-      if (!response.ok) throw new Error("Failed to get the csv file.");
-      return response.text();
-    })
-    .then(csvText => {
-        const res = Papa.parse<QueryTableRecord>(csvText, {
-        header: true,
-        skipEmptyLines: true
-      });
-      return res;
-    })
-    .catch(error => {
-      console.error("Failed to load or parse CSV:", error);
-      throw error;
-    });
+async function loadTransportCSVToDB(url: string){
+  if (transportLoaded) return;
+
+  const response = await fetch(url); // ('/lausanne/transport_table.csv');
+  const csvText = await response.text();
+
+  const parsed = Papa.parse<RawTransportTableRecord>(csvText, {
+    header: true,
+    skipEmptyLines: true,
+    delimiter: ",",
+    // quotes: true,
+    // error: (err) => console.error('PapaParse error:', err),
+    // preview: 5,          // parse only first 5 rows for quick debug
+  });
+
+  if (parsed.errors.length) {
+    console.error('CSV Parse Error:', parsed.errors);
+    return;
+  }
+
+  const records: TransportTableRecord[] = parsed.data.map((r: RawTransportTableRecord) => ({
+    start_station: r.start_station,
+    next_station: r.next_station,
+    route_id: r.route_id, 
+    route_desc: r.route_desc, 
+    route_short_name: r.route_short_name, 
+    departure_arrival_time: parseDepartureArrivalTime(r.departure_arrival_time),
+  }));
+
+  alasql('CREATE TABLE transport_table');
+  alasql.tables.transport_table.data = records;
+
+  transportLoaded = true;
+  console.log('Transport table csv is loaded into memory.');
 }
 
-function loadStations(): Promise<Papa.ParseResult<StationRecord>> {
-  return fetch("/epfl_simpl_stations.csv")
-    .then(response => {
-      if (!response.ok) throw new Error("Failed to get the csv file.");
-      return response.text();
-    })
-    .then(csvText => {
-        const res = Papa.parse<StationRecord>(csvText, {
-        header: true,
-        skipEmptyLines: true
-      });
-      return res;
-    })
-    .catch(error => {
-      console.error("Failed to load or parse CSV:", error);
-      throw error;
-    });
+async function loadWalkCSVToDB(url: string) {
+  if (walkLoaded) return;
+
+  const response = await fetch(url); // ('/lausanne/walk_table.csv');
+  const csvText = await response.text();
+
+  const parsed = Papa.parse<WalkTableRecord>(csvText, {
+    header: true,
+    skipEmptyLines: true,
+    delimiter: ",",
+    // quotes: true,
+    // error: (err) => console.error('PapaParse error:', err),
+    // preview: 5,          // parse only first 5 rows for quick debug
+  });
+
+  if (parsed.errors.length) {
+    console.error('CSV Parse Error:', parsed.errors);
+    return;
+  }
+
+  // Load into AlaSQL
+  alasql('CREATE TABLE walk_table');
+  alasql.tables.walk_table.data = parsed.data;
+
+  walkLoaded = true;
+  console.log('Walk table CSV is loaded into memory.');
 }
 
-interface ArrivalInfo {
-  from: Station;
-  departureTime: Date; // leaves the `from` station at
-  route_desc: string;  // takes this route
-  route_short_name: string;
-  arrivalTime: Date;   // arrives the destination station at
+async function loadCSV() {
+  await Promise.all([
+    loadStationCSVToMap('/lausanne/stations.csv'),
+    loadTransportCSVToDB('/lausanne/transport_table.csv'),
+    loadWalkCSVToDB('/lausanne/walk_table.csv')
+  ]);
+
+  console.log("tranportLoaded = ", transportLoaded); 
+  console.log("walkLoaded = ", walkLoaded);
+
+  allLoaded = stationLoaded && transportLoaded && walkLoaded;
 }
+
+// =========== shortest path ==========
 
 interface Arrival {
-  station: Station;
-  info: ArrivalInfo;
+    station: Station;
+    arrivalTime: Date;
+    totalWalkTime: number;
+    from: Station;
+    departureTime: Date; 
+    routeDesc: string;
+    routeShortName: string;
 }
 
 const compareArrival: ICompare<Arrival> = (a: Arrival, b: Arrival) => {
-  return a.info.arrivalTime < b.info.arrivalTime ? -1 : 1;
+    return a.arrivalTime < b.arrivalTime ? -1 : 1;
 }
 
-function isLaterOrEq (a: string, b: Date): boolean {
-  const [hs, ms, ss] = a.split(":");
-  const [ha, ma, sa] = [parseInt(hs, 10), parseInt(ms, 10), parseInt(ss, 10)];
-  const [hb, mb, sb] = [b.getHours(), b.getMinutes(), b.getSeconds()];
-  return ha > hb
-    || (ha === hb && ma > mb)
-    || (ha === hb && ma === mb && sa >= sb);
+function dateToString(date: Date): string {
+    const hh = date.getHours().toString().padStart(2, '0');
+    const mm = date.getMinutes().toString().padStart(2, '0');
+    const ss = date.getSeconds().toString().padStart(2, '0');
+    return `${hh}:${mm}:${ss}`;
 }
 
-function strToDate(s: string, ref: Date): Date {
-  const [hours, minutes, seconds] = s.split(":").map(Number);
-  return new Date(ref.getFullYear(), ref.getMonth(), ref.getDate(), hours, minutes, seconds);
+function dateSetTime(base: Date, timeStr: string, isNextDay: boolean = false): Date {
+    const [hh, mm, ss] = timeStr.split(":").map(Number);
+    const res = new Date(base); 
+    if (isNextDay) {
+        res.setDate(base.getDate() + 1); 
+    }
+    res.setHours(hh, mm, ss, 0);
+    return res;
 }
 
-function getNextStations (
-  srcStation: Station,
-  srcTime: Date,
-  nextStations: Papa.ParseResult<NextStationRecord>,
-  queryTable: Papa.ParseResult<QueryTableRecord>
-): Array<Arrival> {
-  const infos = new Map<Station, ArrivalInfo>();
-  const curNextStations = nextStations.data.filter((row: NextStationRecord) => row.from === srcStation);
-  for (const next of curNextStations) {
-    const trips = queryTable.data.filter((row: QueryTableRecord) =>
-      row.route_id == next.route_id && row.station == srcStation && isLaterOrEq(row.departure_time, srcTime));
-    // (Aggressive) optimization: assume that for all trips of the same route takes roughly the same time.
-    // Otherwise, need to find the arrival time for each trip in trips and take the earliest one, which is very slow.
-    const earliestDeparture = trips.reduce((res, cur) => {
-      return cur.departure_time < res.departure_time ? cur : res;
+function getClosest(time: Date, departureArrivalTime: [string, string][]): [Date, Date] | null {
+    let timeStr = dateToString(time);
+    let l = 0; 
+    let r = departureArrivalTime.length - 1; 
+    let res: [string, string] | null = null;
+    while(l <= r){
+        const mid = Math.floor((l + r) / 2);
+        if (departureArrivalTime[mid][0] >= timeStr) {
+            res = departureArrivalTime[mid];
+            r = mid - 1;
+        } else {
+            l = mid + 1; 
+        }
+    }
+    if (res == null && departureArrivalTime.length >= 1) {
+        res = departureArrivalTime[0]; // the next day
+    }
+    if (res != null) {
+        const isNextDay = res[0] < timeStr ? true : false; 
+        return [dateSetTime(time, res[0], isNextDay), dateSetTime(time, res[1], isNextDay)];
+    }
+    return null;
+}
+
+async function dijkstra(startStation: Station, startTime: Date) {
+    if (allLoaded == false) {
+        await loadCSV();
+    }
+
+    let earliest = new Map<Station, Arrival>();
+    let queue = new PriorityQueue<Arrival>(compareArrival);
+    queue.push({
+        station: startStation,
+        arrivalTime: startTime,
+        totalWalkTime: 0,
+        from: "",
+        departureTime: startTime, 
+        routeDesc: "",
+        routeShortName: "",
     });
-    const earliestArrival = queryTable.data.filter((row: QueryTableRecord) =>
-      row.trip_id == earliestDeparture.trip_id && row.station == next.to && row.stop_sequence > earliestDeparture.stop_sequence)[0];
-    if (!earliestArrival) continue;
-    const arrivalTime = strToDate(earliestArrival.arrival_time, srcTime);
-    const departureTime = strToDate(earliestDeparture.departure_time, srcTime);
-    if (!infos.has(next.to) || arrivalTime < (infos.get(next.to)?.arrivalTime ?? Infinity)) {
-      infos.set(next.to, {
-        from: srcStation,
-        departureTime: departureTime,
-        route_desc: earliestDeparture.route_desc,
-        route_short_name: earliestDeparture.route_short_name,
-        arrivalTime: arrivalTime
-      })
+    let cur = queue.dequeue(); 
+    while(cur) {
+        if (earliest.has(cur.station)){
+            cur = queue.dequeue();
+            continue;
+        }
+        earliest.set(cur.station, cur);
+        // reachable by public transportation
+        const tranRecords = alasql(`SELECT * FROM transport_table WHERE start_station = "${cur.station}"`) as TransportTableRecord[];
+        for (const record of tranRecords) {
+            const departureArrivalTime = getClosest(cur.arrivalTime, record.departure_arrival_time);
+            if (departureArrivalTime != null) {
+                queue.push({
+                    station: record.next_station,
+                    arrivalTime: departureArrivalTime[1],
+                    totalWalkTime: cur.totalWalkTime,
+                    from: record.start_station,
+                    departureTime: departureArrivalTime[0], 
+                    routeDesc: record.route_desc,
+                    routeShortName: record.route_short_name,
+                });
+           }
+        }
+        // reachable by foot
+        const walkRecords = alasql(`SELECT * FROM walk_table WHERE start_station = "${cur.station}"`) as WalkTableRecord[];
+        for (const record of walkRecords) {
+            const totalWalkTime = cur.totalWalkTime + record.walk_time;
+            if (totalWalkTime >= 10) continue;
+            queue.push({
+                station: record.next_station,
+                arrivalTime: new Date(cur.arrivalTime.getTime() + record.walk_time * 60 * 1000), 
+                totalWalkTime: totalWalkTime,
+                from: record.start_station, 
+                departureTime: cur.arrivalTime, 
+                routeDesc: "W",
+                routeShortName: "Walk",
+            });
+        }
+        // break;
+        cur = queue.dequeue();
     }
-  }
-  let arrivals: Array<Arrival> = [];
-  for (const [to, info] of infos) {
-    arrivals.push({station: to, info: info});
-  }
-  return arrivals;
+    return earliest;
 }
 
-function dijkstra(
-  srcStation: Station,
-  srcTime: Date,
-  nextStations: Papa.ParseResult<NextStationRecord>,
-  queryTable: Papa.ParseResult<QueryTableRecord>
-) {
-  let earliest = new Map<Station, ArrivalInfo>();
-  let queue = new PriorityQueue<Arrival>(compareArrival);
-  queue.push({
-    station: srcStation,
-    info: {
-      from: "",
-      departureTime: srcTime,
-      route_desc: "",
-      route_short_name: "",
-      arrivalTime: srcTime
+function getPath(earliest: Map<Station, Arrival>, dest: Station): Array<Arrival> {
+    const path: Array<Arrival> = [];
+    let cur = dest; 
+    let arrival = earliest.get(cur);
+    while (arrival && arrival.from !== "") {
+        path.push(arrival);
+        cur = arrival.from; 
+        arrival = earliest.get(cur); 
     }
-  });
+    return path.reverse();
+}
 
-  let cur = queue.dequeue();
-  while(cur) {
-    if (earliest.has(cur.station)) {
-      cur = queue.dequeue();
-      continue;
+function tripDateToString(startTime: Date, tripTime: Date): string {
+    const diff = tripTime.getDate() - startTime.getDate(); 
+    return (diff > 0) ? `(+${diff}) ${dateToString(tripTime)}` : dateToString(tripTime); 
+}
+
+function pathToString(path: Array<Arrival>, startTime: Date): string {
+    let s = "", from = null, to = null, fromTime = "", toTime = "";
+    for (const arrival of path) {
+        from = stationIdMap.get(arrival.from);
+        to = stationIdMap.get(arrival.station);
+        fromTime = tripDateToString(startTime, arrival.departureTime);
+        toTime = tripDateToString(startTime, arrival.arrivalTime);
+        s += `${from} @ ${fromTime}  -----(${arrival.routeDesc}) ${arrival.routeShortName}---->  ${to} @ ${toTime} \n`;
     }
-    earliest.set(cur.station, cur.info);
-    let nexts = getNextStations(cur.station, cur.info.arrivalTime, nextStations, queryTable);
-    for (let next of nexts) {
-      queue.push(next);
+    if (path.length > 0) s += `total walk time: ${path[path.length - 1].totalWalkTime} minutes\n`;
+    return s;
+}
+
+function getPathString(earliest: Map<Station, Arrival>, dest: Station, startTime: Date): string {
+    return pathToString(getPath(earliest, dest), startTime);
+}
+
+// ========== UI ==========
+
+async function ui() {
+    await loadStationCSVToMap('/lausanne/stations.csv');
+
+    const stationList = document.getElementById('stationList');
+    if (stationList) {
+        console.log(stationIdMap);
+        for (const key of stationNameMap.keys()) {
+            const option = document.createElement('option');
+            option.value = key;
+            stationList.appendChild(option);
+        }
     }
-    cur = queue.dequeue();
-  }
-  return earliest;
+
+    const searchBtn = document.getElementById('searchBtn');
+    if (searchBtn) {
+        searchBtn.onclick = async () => {
+            const startStationName = (document.getElementById('startStation') as HTMLInputElement).value;
+            const startTimeStr = (document.getElementById('startTime') as HTMLInputElement).value;
+            const startTime = dateSetTime(new Date(), startTimeStr);
+
+            const startStation = stationNameMap.get(startStationName);
+            if (!startStation) return;
+            const earliest = await dijkstra(startStation, startTime);
+            const result = document.getElementById('result');
+            if (!result) return;
+
+            let s = "";
+            for (const dest of earliest.keys()) {
+                s += `To ${stationIdMap.get(dest)}: \n`
+                s += getPathString(earliest, dest, startTime);
+            }
+            result.innerText = s;
+        }
+    }
 }
 
-function getPath(dest: Station, earliest: Map<Station, ArrivalInfo>): Array<Arrival> {
-  const path: Array<Arrival> = []
-  let cur = dest;
-  let info = earliest.get(cur);
-  while(info && info.from !== ""){
-    path.push({station: cur, info: info});
-    cur = info.from;
-    info = earliest.get(cur);
-  }
-  return path.reverse();
-}
-
-function formatDate(date: Date): string {
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-  const second = date.getSeconds();
-  const pad = (n: number) => n.toString().padStart(2, "0");
-  return `${pad(hour)}:${pad(minute)}:${pad(second)}`;
-}
-
-// For debugging.
-function printPath(path: Array<Arrival>, stations: Map<Station, string>) {
-  for(const {station: cur, info: info} of path){
-    console.log(`Leave ${stations.get(info.from)} at ${formatDate(info.departureTime)} by ${info.route_short_name}(type: ${info.route_desc}), arrive at ${stations.get(cur)} at ${formatDate(info.arrivalTime)}.`);
-  }
-  console.log("Finished.");
-}
-
-async function init() {
-  const stationsData = await loadStations();
-  const stations = new Map<Station, string>();
-  for (const r of stationsData.data) {
-    stations.set(r.station, r.station_name);
-  }
-  const nextStations = await loadNextStations();
-  const queryTable = await loadQueryTable();
-  return {stations, nextStations, queryTable};
-}
-
-
-const {stations, nextStations, queryTable} = await init();
-const epfl = "Parent8501214";
-const time = new Date(2025, 3, 14, 16, 0); // 2025-04-14 16:00
-let earliest = dijkstra(epfl, time, nextStations, queryTable);
-// console.log(earliest);
-const dest = "Parent8593868"; // Chavannes-R., Concorde
-const path = getPath(dest, earliest);
-console.log(`Print path from ${stations.get(epfl)} to ${stations.get(dest)}: `);
-printPath(path, stations);
+(async () => { await ui(); })();

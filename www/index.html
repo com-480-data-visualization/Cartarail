@@ -10,16 +10,25 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cartarail (COM-480 SP25 final project)</title>
-  </head>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Cartarail (COM-480 SP25 final project)</title>
+    </head>
 
-  <body>
-    <h1>Hello World!</h1>
-    <div id="spring-layout"></div>
-    <script type="module" src="/src/main.ts"></script>
-    <script type="module" src="/src/spring-layout.ts"></script>
-  </body>
+    <body>
+        <h1 id="heading">Hello World!</h1>
+
+        <input list="stationList" type="text" id="startStation" placeholder="from ...">
+        <datalist id="stationList"> </datalist>
+
+        <input id="startTime" placeholder="start time HH:mm:ss" />
+        <button id="searchBtn">search</button>
+        <div id="result"></div>
+
+        <div id="spring-layout"></div>
+        <script type="module" src="/src/main.ts"></script>
+        <script type="module" src="/src/spring-layout.ts"></script>
+        <script type="module" src="/src/main.ts"></script>
+    </body>
 </html>

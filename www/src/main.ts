@@ -155,10 +155,6 @@ async function loadCSV() {
     loadTransportCSVToDB('/lausanne/transport_table.csv'),
     loadWalkCSVToDB('/lausanne/walk_table.csv')
   ]);
-
-  console.log("tranportLoaded = ", transportLoaded); 
-  console.log("walkLoaded = ", walkLoaded);
-
   allLoaded = stationLoaded && transportLoaded && walkLoaded;
 }
 
@@ -245,7 +241,12 @@ async function dijkstra(startStation: Station, startTime: Date) {
         // reachable by public transportation
         const tranRecords = alasql(`SELECT * FROM transport_table WHERE start_station = "${cur.station}"`) as TransportTableRecord[];
         for (const record of tranRecords) {
-            const departureArrivalTime = getClosest(cur.arrivalTime, record.departure_arrival_time);
+            let at = cur.arrivalTime;
+            if (record.route_desc != cur.routeDesc || record.route_short_name != cur.routeShortName) { 
+              // change routes within the station (takes: 3 mins)
+              at = new Date(at.getTime() + 3 * 60 * 1000); // ms 
+            }
+            const departureArrivalTime = getClosest(at, record.departure_arrival_time);
             if (departureArrivalTime != null) {
                 queue.push({
                     station: record.next_station,
@@ -280,7 +281,6 @@ async function dijkstra(startStation: Station, startTime: Date) {
 }
 
 function getPath(earliest: Map<Station, Arrival>, dest: Station): Array<Arrival> {
-    console.log(`getPath: to ${stationIdMap.get(dest)}`);
     const path: Array<Arrival> = [];
     let curArrival = earliest.get(dest);
     let nextArrival: Arrival | null = null;
@@ -311,6 +311,17 @@ function tripDateToString(startTime: Date, tripTime: Date): string {
     return (diff > 0) ? `(+${diff}) ${dateToString(tripTime)}` : dateToString(tripTime); 
 }
 
+function formatTimeDiff(date1: Date, date2: Date): string {
+  let diffMs = Math.abs(date2.getTime() - date1.getTime());
+  const hours = Math.floor(diffMs / (1000 * 60 * 60));
+  diffMs %= 1000 * 60 * 60;
+  const minutes = Math.floor(diffMs / (1000 * 60));
+  diffMs %= 1000 * 60;
+  const seconds = Math.floor(diffMs / 1000);
+  const pad = (n: number) => n.toString().padStart(2, '0');
+  return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
 function pathToString(path: Array<Arrival>, startTime: Date): string {
     let s = "", from = null, to = null, fromTime = "", toTime = "";
     for (const arrival of path) {
@@ -320,7 +331,10 @@ function pathToString(path: Array<Arrival>, startTime: Date): string {
         toTime = tripDateToString(startTime, arrival.arrivalTime);
         s += `${from} @ ${fromTime}  -----(${arrival.routeDesc}) ${arrival.routeShortName}---->  ${to} @ ${toTime} \n`;
     }
-    if (path.length > 0) s += `total walk time: ${Math.ceil(path[path.length - 1].totalWalkTime)} minutes\n`;
+    if (path.length > 0) {
+      s += `total walk time: within ${Math.ceil(path[path.length - 1].totalWalkTime)} minutes\n`;
+      s += `total trip time: ${formatTimeDiff(path[0].departureTime, path[path.length - 1].arrivalTime)}\n`
+    }
     return s;
 }
 
@@ -335,7 +349,6 @@ async function ui() {
 
     const stationList = document.getElementById('stationList');
     if (stationList) {
-        console.log(stationIdMap);
         for (const key of stationNameMap.keys()) {
             const option = document.createElement('option');
             option.value = key;
@@ -358,8 +371,8 @@ async function ui() {
 
             let s = "";
             for (const dest of earliest.keys()) {
-                s += `To ${stationIdMap.get(dest)}: \n`
-                s += getPathString(earliest, dest, startTime);
+              s += `To ${stationIdMap.get(dest)}: \n`
+              s += getPathString(earliest, dest, startTime);
             }
             result.innerText = s;
         }

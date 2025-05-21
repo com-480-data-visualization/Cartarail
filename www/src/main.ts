@@ -261,7 +261,7 @@ async function dijkstra(startStation: Station, startTime: Date) {
         // reachable by foot
         const walkRecords = alasql(`SELECT * FROM walk_table WHERE start_station = "${cur.station}"`) as WalkTableRecord[];
         for (const record of walkRecords) {
-            const totalWalkTime = cur.totalWalkTime + record.walk_time;
+            const totalWalkTime: number = cur.totalWalkTime + +record.walk_time;
             if (totalWalkTime >= 10) continue;
             queue.push({
                 station: record.next_station,
@@ -305,7 +305,7 @@ function pathToString(path: Array<Arrival>, startTime: Date): string {
         toTime = tripDateToString(startTime, arrival.arrivalTime);
         s += `${from} @ ${fromTime}  -----(${arrival.routeDesc}) ${arrival.routeShortName}---->  ${to} @ ${toTime} \n`;
     }
-    if (path.length > 0) s += `total walk time: ${path[path.length - 1].totalWalkTime} minutes\n`;
+    if (path.length > 0) s += `total walk time: ${Math.ceil(path[path.length - 1].totalWalkTime)} minutes\n`;
     return s;
 }
 

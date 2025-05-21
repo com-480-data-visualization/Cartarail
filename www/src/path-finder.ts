@@ -10,40 +10,40 @@ type Station = string;
 
 const base = import.meta.env.BASE_URL;
 const target = "lausanne";
-const stationTableUrl = `${base}${target}/stations.csv`; 
-const transportTableUrl = `${base}${target}/transport_table.csv`; 
-const walkTableUrl = `${base}${target}/walk_table.csv`; 
+const stationTableUrl = `${base}${target}/stations.csv`;
+const transportTableUrl = `${base}${target}/transport_table.csv`;
+const walkTableUrl = `${base}${target}/walk_table.csv`;
 
 
 // =========== load data ==========
 
 interface StationTableRecord {
-  stop_id: Station; 
+  stop_id: Station;
   stop_name: string;
   stop_lat: number;
   stop_lon: number;
 }
 
 interface RawTransportTableRecord {
-  start_station: Station; 
-  next_station: Station; 
-  route_id: string; 
-  route_desc: string; 
-  route_short_name: string; 
+  start_station: Station;
+  next_station: Station;
+  route_id: string;
+  route_desc: string;
+  route_short_name: string;
   departure_arrival_time: string;
 }
 
 interface TransportTableRecord {
-  start_station: Station; 
-  next_station: Station; 
-  route_id: string; 
-  route_desc: string; 
-  route_short_name: string; 
+  start_station: Station;
+  next_station: Station;
+  route_id: string;
+  route_desc: string;
+  route_short_name: string;
   departure_arrival_time: [string, string][];
 }
 
 interface WalkTableRecord {
-  start_station: Station; 
+  start_station: Station;
   next_station: Station;
   walk_time: number;
 }
@@ -81,7 +81,7 @@ function loadStationCSVToMap(url: string) {
     })
     .then(res => {
       for (const row of res.data) {
-        stationIdMap.set(row.stop_id, row.stop_name); 
+        stationIdMap.set(row.stop_id, row.stop_name);
         stationNameMap.set(row.stop_name, row.stop_id);
       }
       stationLoaded = true;
@@ -112,9 +112,9 @@ async function loadTransportCSVToDB(url: string){
   const records: TransportTableRecord[] = parsed.data.map((r: RawTransportTableRecord) => ({
     start_station: r.start_station,
     next_station: r.next_station,
-    route_id: r.route_id, 
-    route_desc: r.route_desc, 
-    route_short_name: r.route_short_name, 
+    route_id: r.route_id,
+    route_desc: r.route_desc,
+    route_short_name: r.route_short_name,
     departure_arrival_time: parseDepartureArrivalTime(r.departure_arrival_time),
   }));
 
@@ -166,7 +166,7 @@ interface Arrival {
   arrivalTime: Date;
   totalWalkTime: number;
   from: Station;
-  departureTime: Date; 
+  departureTime: Date;
   routeDesc: string;
   routeShortName: string;
 }
@@ -184,9 +184,9 @@ function dateToString(date: Date): string {
 
 function dateSetTime(base: Date, timeStr: string, isNextDay: boolean = false): Date {
   const [hh, mm, ss] = timeStr.split(":").map(Number);
-  const res = new Date(base); 
+  const res = new Date(base);
   if (isNextDay) {
-    res.setDate(base.getDate() + 1); 
+    res.setDate(base.getDate() + 1);
   }
   res.setHours(hh, mm, ss, 0);
   return res;
@@ -194,8 +194,8 @@ function dateSetTime(base: Date, timeStr: string, isNextDay: boolean = false): D
 
 function getClosest(time: Date, departureArrivalTime: [string, string][]): [Date, Date] | null {
   let timeStr = dateToString(time);
-  let l = 0; 
-  let r = departureArrivalTime.length - 1; 
+  let l = 0;
+  let r = departureArrivalTime.length - 1;
   let res: [string, string] | null = null;
   while(l <= r){
     const mid = Math.floor((l + r) / 2);
@@ -203,14 +203,14 @@ function getClosest(time: Date, departureArrivalTime: [string, string][]): [Date
       res = departureArrivalTime[mid];
       r = mid - 1;
     } else {
-      l = mid + 1; 
+      l = mid + 1;
     }
   }
   if (res == null && departureArrivalTime.length >= 1) {
     res = departureArrivalTime[0]; // the next day
   }
   if (res != null) {
-    const isNextDay = res[0] < timeStr ? true : false; 
+    const isNextDay = res[0] < timeStr ? true : false;
     return [dateSetTime(time, res[0], isNextDay), dateSetTime(time, res[1], isNextDay)];
   }
   return null;
@@ -228,11 +228,11 @@ async function dijkstra(startStation: Station, startTime: Date) {
     arrivalTime: startTime,
     totalWalkTime: 0,
     from: "",
-    departureTime: startTime, 
+    departureTime: startTime,
     routeDesc: "",
     routeShortName: "",
   });
-  let cur = queue.dequeue(); 
+  let cur = queue.dequeue();
   while(cur) {
     if (earliest.has(cur.station)){
       cur = queue.dequeue();
@@ -242,9 +242,9 @@ async function dijkstra(startStation: Station, startTime: Date) {
     // reachable by public transportation
     const tranRecords = alasql(`SELECT * FROM transport_table WHERE start_station = "${cur.station}"`) as TransportTableRecord[];
     for (const record of tranRecords) {
-      let at = cur.arrivalTime; if (record.route_desc != cur.routeDesc || record.route_short_name != cur.routeShortName) { 
+      let at = cur.arrivalTime; if (record.route_desc != cur.routeDesc || record.route_short_name != cur.routeShortName) {
         // change routes within the station (takes: 3 mins)
-        at = new Date(at.getTime() + 3 * 60 * 1000); // ms 
+        at = new Date(at.getTime() + 3 * 60 * 1000); // ms
       }
       const departureArrivalTime = getClosest(at, record.departure_arrival_time);
       if (departureArrivalTime != null) {
@@ -253,7 +253,7 @@ async function dijkstra(startStation: Station, startTime: Date) {
           arrivalTime: departureArrivalTime[1],
           totalWalkTime: cur.totalWalkTime,
           from: record.start_station,
-          departureTime: departureArrivalTime[0], 
+          departureTime: departureArrivalTime[0],
           routeDesc: record.route_desc,
           routeShortName: record.route_short_name,
         });
@@ -266,10 +266,10 @@ async function dijkstra(startStation: Station, startTime: Date) {
       if (totalWalkTime >= 10) continue;
       queue.push({
         station: record.next_station,
-        arrivalTime: new Date(cur.arrivalTime.getTime() + record.walk_time * 60 * 1000), 
+        arrivalTime: new Date(cur.arrivalTime.getTime() + record.walk_time * 60 * 1000),
         totalWalkTime: totalWalkTime,
-        from: record.start_station, 
-        departureTime: cur.arrivalTime, 
+        from: record.start_station,
+        departureTime: cur.arrivalTime,
         routeDesc: "W",
         routeShortName: "Walk",
       });
@@ -290,10 +290,10 @@ function getPath(earliest: Map<Station, Arrival>, dest: Station): Array<Arrival>
     } else if (nextArrival)
       nextArrival = {
         station: nextArrival.station,
-        arrivalTime: nextArrival.arrivalTime, 
-        totalWalkTime: nextArrival.totalWalkTime, 
+        arrivalTime: nextArrival.arrivalTime,
+        totalWalkTime: nextArrival.totalWalkTime,
         from: curArrival.from,
-        departureTime: curArrival.departureTime, 
+        departureTime: curArrival.departureTime,
         routeDesc: nextArrival.routeDesc,
         routeShortName: nextArrival.routeShortName,
       };
@@ -306,8 +306,8 @@ function getPath(earliest: Map<Station, Arrival>, dest: Station): Array<Arrival>
 }
 
 function tripDateToString(startTime: Date, tripTime: Date): string {
-  const diff = tripTime.getDate() - startTime.getDate(); 
-  return (diff > 0) ? `(+${diff}) ${dateToString(tripTime)}` : dateToString(tripTime); 
+  const diff = tripTime.getDate() - startTime.getDate();
+  return (diff > 0) ? `(+${diff}) ${dateToString(tripTime)}` : dateToString(tripTime);
 }
 
 function formatTimeDiff(date1: Date, date2: Date): string {

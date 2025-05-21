@@ -114,7 +114,7 @@ The dataset contains over a billion trips, making over 12 billions stops in 30'0
 
 Once the preprocessing is complete, Dijkstra’s algorithm is employed to compute the quickest arrival time for each destination. This algorithm provides the earliest arrival time to all destinations along with the corresponding path to reach those destinations.
 
-Note that this algorithm give the earliest arrival time and not necessary the shortest travel time to a destination. For example, starting from Lausanne at 11:20, this algorithm will give the following path to Bière: 
+Note that this algorithm give the earliest arrival time and not necessary the shortest travel time to a destination. For example, starting from Lausanne at 11:20, this algorithm will give the following path to Bière:
 - IR 15 From Lausanne @ 11:23 to Morges @ 11:33
 - R 56 From Morges @ 11:54 to Bière @ 12:25
 
@@ -140,7 +140,7 @@ We set the strengths of these spring forces to be in appropriate balance.
 
 ### Tools and classes
 
-For our project, the classes of most interest are the classes on maps, graphs, storytelling with data and creative coding, and D3.js. 
+For our project, the classes of most interest are the classes on maps, graphs, storytelling with data and creative coding, and D3.js.
 For the data processing, we are using jupyter notebooks, pandas and Python's csv libraries. For the vizualization layout, we are using the [force-directed layout](https://d3js.org/d3-force) module of D3.
 
 ### Extra ideas of improvements
@@ -154,7 +154,7 @@ We have three main ideas to improve our vizualization:
 
 To have a local version of the webpage which display the travel time from Lausanne to a few cities of Switzerland, you need to have `npm` installed on your machine and then run the following command inside the `www` directory:
 
-```bash 
+```bash
 $ npm install && npm run dev
 ```
 
@@ -162,6 +162,6 @@ It will display a link to open in your web-browser to see the vizualization whic
 
 ![Prototype Website](assets/image.png)
 
-The red dots are the original location of the cities and the black one are the locations adjusted for the travel time from Lausanne at 16:20 on Apr 17. The gray lines are the springs used in the layout. 
+The red dots are the original location of the cities and the black one are the locations adjusted for the travel time from Lausanne at 16:20 on Apr 17. The gray lines are the springs used in the layout.
 
 ## Milestone 3 (30th May, 5pm)

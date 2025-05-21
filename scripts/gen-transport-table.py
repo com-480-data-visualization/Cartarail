@@ -2,34 +2,34 @@ import pandas as pd
 import pickle
 import os
 
-target = "lausanne"
+target = "train"
 
 stations = pd.read_csv(f"../data/preprocessed/{target}/stations.csv");
 routes = pd.read_csv(f"../data/preprocessed/{target}/routes.csv");
 trips = pd.read_csv(f"../data/preprocessed/{target}/trips.csv");
 stop_times = pd.read_csv(f"../data/preprocessed/{target}/stop_times.csv", dtype = {'stop_sequence': int});
 
-def getField(df, xname, x, fname): 
+def getField(df, xname, x, fname):
     records = df[df[xname] == x]
-    if records.empty: 
+    if records.empty:
        return ""
-    else: 
+    else:
        return records.iloc[0][fname]
 
-def getRouteId(trip_id): 
+def getRouteId(trip_id):
    return getField(trips, 'trip_id', trip_id, 'route_id')
 
-def getRouteInfo(route_id): 
+def getRouteInfo(route_id):
    return getField(routes, 'route_id', route_id, ['route_desc', 'route_short_name'])
 
-def init(): 
+def init():
     query_table_bkfname = f"{target}_query_table_backup.pkl"
     query_table_idx = 0
     query_table = pd.DataFrame(columns=['start_station', 'next_station', 'route_id', 'route_desc', 'route_short_name', 'departure_arrival_time'])
     processed_rows_bkfname = f"{target}_processed_rows_backup.pkl"
     processed_rows_idx = 0
     if (
-        os.path.exists(query_table_bkfname) and 
+        os.path.exists(query_table_bkfname) and
         os.path.exists(processed_rows_bkfname)
     ):
         with open(query_table_bkfname, "rb") as f:
@@ -41,15 +41,15 @@ def init():
         print("One or more backup files are missing. Nothing was loaded.")
     return query_table, query_table_idx, query_table_bkfname, processed_rows_idx, processed_rows_bkfname
 
-def gen(): 
+def gen():
     query_table, query_table_idx, query_table_bkfname, processed_rows_idx, processed_rows_bkfname = init()
-    for i, record in stop_times.iterrows(): 
-        if i <= processed_rows_idx: 
+    for i, record in stop_times.iterrows():
+        if i <= processed_rows_idx:
             continue
         print("i = ", i, " query_table_idx = ", query_table_idx)
         # gen
         next_records = stop_times[(stop_times['trip_id'] == record['trip_id']) & (stop_times['stop_sequence'] == record['stop_sequence'] + 1)]
-        if next_records.empty: 
+        if next_records.empty:
             continue
         next_record = next_records.iloc[0]
         start_station = record['parent_station']
@@ -57,7 +57,7 @@ def gen():
         route_id = getRouteId(record['trip_id'])
         route_info = getRouteInfo(route_id)
         query_table.loc[query_table_idx] = [start_station, next_station, route_id, route_info['route_desc'], route_info['route_short_name'], (record['departure_time'], next_record['arrival_time'])]
-        query_table_idx += 1 
+        query_table_idx += 1
         # save
         if i % 100 == 0 and i > 0:
             print(f"Saving backup at index {i}...")
@@ -65,11 +65,11 @@ def gen():
                 pickle.dump(query_table, f)
             with open(processed_rows_bkfname, "wb") as f:
                 pickle.dump(i, f)
-        # if query_table_idx >= 10000: 
+        # if query_table_idx >= 10000:
         #     break
     return compress(query_table)
 
-def compress(query_table): 
+def compress(query_table):
     merged_df = query_table.groupby(['start_station', 'next_station', 'route_id', 'route_desc', 'route_short_name'], as_index=False).agg({
         'departure_arrival_time': lambda tuples: sorted(set(tuples), key=lambda t: t[0])
     })

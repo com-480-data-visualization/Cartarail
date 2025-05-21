@@ -280,14 +280,29 @@ async function dijkstra(startStation: Station, startTime: Date) {
 }
 
 function getPath(earliest: Map<Station, Arrival>, dest: Station): Array<Arrival> {
+    console.log(`getPath: to ${stationIdMap.get(dest)}`);
     const path: Array<Arrival> = [];
-    let cur = dest; 
-    let arrival = earliest.get(cur);
-    while (arrival && arrival.from !== "") {
-        path.push(arrival);
-        cur = arrival.from; 
-        arrival = earliest.get(cur); 
+    let curArrival = earliest.get(dest);
+    let nextArrival: Arrival | null = null;
+    while (curArrival && curArrival.from !== "") {
+        if (nextArrival && (curArrival.routeDesc !== nextArrival.routeDesc || curArrival.routeShortName !== nextArrival.routeShortName)) {
+          path.push(nextArrival);
+          nextArrival = curArrival;
+        } else if (nextArrival)
+          nextArrival = {
+            station: nextArrival.station,
+            arrivalTime: nextArrival.arrivalTime, 
+            totalWalkTime: nextArrival.totalWalkTime, 
+            from: curArrival.from,
+            departureTime: curArrival.departureTime, 
+            routeDesc: nextArrival.routeDesc,
+            routeShortName: nextArrival.routeShortName,
+          };
+        else
+          nextArrival = curArrival;
+        curArrival = earliest.get(curArrival.from);
     }
+    if (nextArrival) path.push(nextArrival);
     return path.reverse();
 }
 

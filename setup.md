@@ -31,11 +31,11 @@
 
     Open the link in the browser to see the website. Press `F12` and open console, you will see an example trip output (from `main.ts`).
 
-  - Currently, `npm run build` (which will run `tsc && vite build`) does not work because there is top-level await, and vite does not like it and refuses to package the entire website. You can run `tsc` (the typescript compiler), which should work normally and it's happy :) 
+  - run `npm run build` and `npm run deploy` to deploy to github pages.
 
 - scripts
 
-  - `src/main.ts`: implementation of the dijkstra algorithm. 
+  - `src/path-finder.ts`: implementation of the dijkstra algorithm. 
 
 - `public`: assets that can be found by the website
 

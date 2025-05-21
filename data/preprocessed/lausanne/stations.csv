@@ -1,0 +1,573 @@
+stop_id,stop_name,stop_lat,stop_lon
+Parent8501045,Denges-Echandens,46.52912417,6.54050782
+Parent8501047,Morges-St-Jean,46.51819633,6.50804271
+Parent8501048,Lonay-Préverenges,46.52313514,6.51954114
+Parent8501075,Lausanne-Ouchy (lac),46.50507755,6.62760847
+Parent8501116,Vufflens-la-Ville,46.57624689,6.53077008
+Parent8501117,Bussigny,46.54758771,6.55182659
+Parent8501118,Renens VD,46.53704053,6.57893775
+Parent8501120,Lausanne,46.5167931,6.62909069
+Parent8501121,Pully,46.51092637,6.65947171
+Parent8501122,Lutry,46.50378528,6.69060732
+Parent8501123,Villette VD,46.495425,6.70737887
+Parent8501124,Cully,46.4885602,6.72715079
+Parent8501125,Epesses,46.48932713,6.74516201
+Parent8501160,Lausanne-Chauderon,46.52322786,6.62606337
+Parent8501162,Union-Prilly,46.53471703,6.60984878
+Parent8501163,Prilly-Chasseur,46.53964816,6.60743231
+Parent8501164,Cery-Fleur-de-Lys,46.54457885,6.60500686
+Parent8501165,Jouxtens-Mézery,46.54834144,6.60169207
+Parent8501166,Romanel-sur-Lausanne,46.5624689,6.60317429
+Parent8501168,Vernand-Camarès,46.57094238,6.60480025
+Parent8501169,Cheseaux,46.58434778,6.60595907
+Parent8501170,Bel-Air LEB,46.57867976,6.60552788
+Parent8501171,Etagnières,46.60267527,6.61462781
+Parent8501181,Lausanne-Flon,46.52079869,6.63033935
+Parent8501207,"Lausanne, Montelly",46.52182476,6.61355882
+Parent8501208,"Lausanne, Provence",46.52326494,6.60865402
+Parent8501209,"Lausanne, Malley",46.52413645,6.60256344
+Parent8501210,"Lausanne, Bourdonnette",46.52326494,6.58980736
+Parent8501211,"Chavannes-R., UNIL-Chamberonne",46.5242168,6.58470493
+Parent8501212,"Chavannes-R., UNIL-Mouline",46.5249894,6.57889283
+Parent8501213,"Ecublens VD, UNIL-Sorge",46.52244905,6.57357481
+Parent8501214,"Ecublens VD, EPFL",46.52219563,6.56613676
+Parent8501215,"Ecublens VD, Bassenges",46.52458765,6.56459165
+Parent8501216,"Ecublens VD, Cerisaie",46.52775213,6.56654998
+Parent8501217,"Chavannes-R., Crochy",46.53271479,6.56997256
+Parent8501218,"Ecublens VD, Epenex",46.53771408,6.57358379
+Parent8501245,St-Sulpice VD (lac),46.50858321,6.56122297
+Parent8501297,"Riex, fontaine",46.49337184,6.73572071
+Parent8501317,Cully (lac),46.48747165,6.73161541
+Parent8501318,Lutry (lac),46.5012625,6.6840047
+Parent8501319,Pully (lac),46.50534342,6.66120546
+Parent8504000,Pully-Nord,46.51467893,6.65798949
+Parent8504003,Bossière,46.50975171,6.69932098
+Parent8504010,La Conversion,46.51308397,6.67832735
+Parent8504011,Grandvaux,46.49694628,6.72265023
+Parent8504171,"Lausanne, En Marin",46.55710745,6.68413047
+Parent8504172,"Savigny, Claie-aux-Moines",46.54063681,6.70409103
+Parent8504173,"Savigny, centre",46.53853592,6.73092371
+Parent8504176,"Lausanne, Tunnel",46.52544677,6.63449855
+Parent8504177,"Le Mont-sur-L., Grand-Mont",46.56300625,6.63250429
+Parent8504178,"Cugy VD, poste",46.58371803,6.63891826
+Parent8504656,"Romanel-sur-Morges, poste",46.55566199,6.51102511
+Parent8505529,"Bussigny, St-Germain",46.55109062,6.5456911
+Parent8506417,"Romanel-sur-Morges,Z.I. Moulin",46.56249978,6.52183185
+Parent8506903,"Bussigny, Sottelles",46.55525429,6.55061387
+Parent8506905,"Bussigny, Tatironne",46.55280184,6.54954487
+Parent8506907,"Bussigny, Jordil",46.55219643,6.54720925
+Parent8507227,"Chavannes-R., Cèdres",46.53015626,6.57291005
+Parent8507540,"Cugy VD, Grillon",46.5878545,6.64027472
+Parent8507626,"Etagnières, gare",46.5997065,6.61275932
+Parent8507628,"Romanel-sur-Lausanne, gare",46.56270361,6.60382108
+Parent8507632,"Crissier, Montremoën",46.56198096,6.57767112
+Parent8509297,"Lutry, Bras-de-Fer",46.51216283,6.70013845
+Parent8509491,"Lausanne, Chalet-à-Gobet/Jorat",46.56485297,6.69350888
+Parent8510004,"Cully, Hôpital de Lavaux",46.49049604,6.72493195
+Parent8510421,"Crissier, Chicorée",46.54074803,6.5796564
+Parent8510422,"Chavannes-R., Talluchet",46.52865446,6.58344729
+Parent8510525,"St-Sulpice VD, Castolin",46.51342398,6.54639179
+Parent8510526,"St-Sulpice VD, En Champagny",46.51377636,6.54976945
+Parent8510527,"St-Sulpice VD, Ochettaz-Ormet",46.51379491,6.55643495
+Parent8510528,"St-Sulpice VD, Pré-Fleuri",46.51521675,6.56061212
+Parent8510543,"Prilly, Galicien/aréna",46.52838253,6.60163818
+Parent8510574,"Lausanne, Eugène-Rambert",46.51527857,6.64828769
+Parent8510575,"Lausanne, César-Roux",46.52422298,6.637993
+Parent8510721,"Ecublens VD, Epenex/Pont-Bleu",46.53848648,6.57516482
+Parent8510727,"Ecublens VD, EPFL/Colladon",46.51807888,6.56359452
+Parent8510738,"Les Ripes, gare",46.59102763,6.60703705
+Parent8510751,"Cheseaux-sur-L., Bel-Air",46.57848217,6.60577941
+Parent8510903,"Jouxtens-Mézery, gare",46.54902103,6.60124292
+Parent8510904,"Vernand-Camarès, gare",46.56994811,6.60496194
+Parent8510905,"Lausanne, Maladière/chapelle",46.51787489,6.60214123
+Parent8511245,"Le Mont-sur-L., Rionzi/collège",46.54430699,6.62998901
+Parent8511344,"Lonay-Préverenges, gare nord",46.52366052,6.51903809
+Parent8511383,"Epalinges, Vaugueny",46.54467153,6.6585734
+Parent8511406,"Union-Prilly, gare",46.53503837,6.60975895
+Parent8511583,"Le Mont-sur-L., Chalet Enfants",46.57396213,6.67006285
+Parent8511584,"Le Mont-sur-L., Planches",46.56544589,6.6508389
+Parent8511813,"Ecublens VD, Campus des médias",46.51744218,6.56974798
+Parent8518452,Prilly-Malley,46.52668908,6.60262632
+Parent8530749,"Renens VD, gare",46.53762139,6.57851554
+Parent8570063,"Cheseaux-sur-L., gare",46.58416873,6.60511466
+Parent8570064,"Cheseaux-sur-L., Pâquis",46.58686671,6.60378515
+Parent8570068,"Sullens, Auberge",46.59365736,6.56593014
+Parent8570090,"Morges, Les Pétoleyres",46.52011257,6.50435961
+Parent8570091,"Echichens, Gravelines",46.52338856,6.50700066
+Parent8570092,"Bremblens, bas du village",46.54493102,6.51448363
+Parent8570164,"Cugy VD, Le Moulin",46.58892252,6.64258339
+Parent8570167,"Froideville, village",46.59992253,6.67621631
+Parent8570168,"Froideville, croisée",46.60123103,6.67937838
+Parent8570169,"Froideville, Laiterie",46.60111376,6.68245062
+Parent8570176,"Bretigny-sur-Morrens, croisée",46.5981017,6.64688632
+Parent8570179,"Bottens, La Rustériaz",46.60647086,6.66637976
+Parent8570559,"Cully, gare",46.48854783,6.72689926
+Parent8570560,"Epesses, Crêt-Dessus",46.49229575,6.74385047
+Parent8570561,"Epesses, village",46.4918381,6.74647355
+Parent8573634,"Cugy VD, village",46.58546526,6.64053523
+Parent8577645,"Cheseaux-sur-L., Martheray",46.58162498,6.5970927
+Parent8579230,"Préverenges, village",46.51733709,6.52628749
+Parent8579231,"St-Sulpice VD, Venoge sud",46.5128305,6.5463289
+Parent8579233,"Ecublens VD, EPFL (bus)",46.52205964,6.56687337
+Parent8579234,"Ecublens VD, EPFL Piccard",46.52030419,6.56846339
+Parent8579235,"Le Mont-sur-L., Coppoz",46.55954117,6.63595382
+Parent8579237,"Lausanne, Ours",46.52124374,6.64067896
+Parent8579238,"Lausanne, Sallaz",46.53281367,6.64618563
+Parent8579239,"Epalinges, Croisettes",46.54309598,6.66154682
+Parent8579245,"Lausanne, Foyer",46.53340693,6.66003765
+Parent8579246,"Lausanne, Rovéréaz",46.53272715,6.66772723
+Parent8579247,"Montblesson, Centenaire",46.53662033,6.67779735
+Parent8579248,"Pully, Trois-Chasseurs",46.53435861,6.68442691
+Parent8579249,"Pully, Monts-de-Pully",46.53597149,6.68860408
+Parent8579253,"Lausanne, Montbenon",46.51979732,6.62965663
+Parent8579254,"Lausanne, St-François",46.51936462,6.63348345
+Parent8579255,"Lausanne, Pont-de-Chailly",46.52611429,6.65188095
+Parent8579256,"Pully, Val-Vert",46.52189275,6.66699061
+Parent8579257,"Belmont-sur-L., centre",46.5196057,6.67844413
+Parent8579258,"Belmont-sur-L., Blessoney",46.51951298,6.68394182
+Parent8579259,"Lutry, Landar",46.51774508,6.69002342
+Parent8579260,"Lutry, Croix/Lutry",46.51710837,6.70284238
+Parent8581054,"Romanel-sur-Morges, Pra-Vuatte",46.55113387,6.51226479
+Parent8581344,"Boussens, village",46.60281723,6.58368984
+Parent8581914,"Bussigny, gare",46.54750121,6.55229372
+Parent8581916,"Bussigny, Condémine",46.55550138,6.56070195
+Parent8581917,"Bussigny, Dallaz",46.55231999,6.55144032
+Parent8581918,"Bussigny, Grand-Record",46.55002186,6.55193439
+Parent8581920,"Bussigny, Sauge",46.55561875,6.55373102
+Parent8581921,"Bussigny, Vieux-Four",46.55366052,6.55740513
+Parent8581922,"Bussigny, Riettaz",46.55352461,6.55936346
+Parent8581924,"Bussigny, Sullens",46.55275242,6.56116009
+Parent8582065,"Morrens VD, village",46.58973124,6.62724016
+Parent8582772,"Forel (Lavaux), Grand Champ",46.53387041,6.75622027
+Parent8582773,"Forel (Lavaux), Le Plane",46.52981635,6.75099207
+Parent8582774,"Forel (Lavaux), La Chesaude",46.52062561,6.73816413
+Parent8582775,"Forel (Lavaux), La Chercotte",46.52243051,6.74040094
+Parent8582776,"Forel (Lavaux), La Tuilière",46.51694765,6.73362764
+Parent8582777,"Grandvaux, Le Tronchet",46.51410401,6.72802215
+Parent8582778,"Grandvaux, Crêt-Mouton",46.50881196,6.71771848
+Parent8582779,"Grandvaux, Le Signal",46.50474985,6.71506845
+Parent8582781,"Grandvaux, Le Bougnon",46.49485606,6.71587693
+Parent8583748,"Villars-Ste-Croix, En Coulaye",46.56599556,6.55921973
+Parent8583891,"Vufflens-Aclens, zone industr.",46.56477268,6.52474239
+Parent8587357,"Lausanne, Bellevaux",46.53890049,6.63395058
+Parent8587546,"Epalinges, Lion d'Or",46.55190608,6.68074382
+Parent8587547,"Lausanne, Chalet à Matthey",46.55110916,6.69135292
+Parent8587548,"Lausanne, Vers-chez-les-Blanc",46.55477863,6.6948833
+Parent8587549,"Lausanne, Vulliette",46.558034,6.68144451
+Parent8587550,"Montblesson, Perronnaz",46.54241632,6.67929753
+Parent8587727,Les Ripes,46.59218819,6.60806113
+Parent8587853,"Le Mont-sur-L., Petit-Mont",46.55354315,6.63414821
+Parent8587929,"Lausanne, Chalet-à-Gobet",46.56477268,6.69145174
+Parent8588155,"St-Sulpice VD, Chantres",46.51048124,6.55353339
+Parent8588156,"St-Sulpice VD, Laviau",46.51127876,6.55061387
+Parent8588157,"St-Sulpice VD, Bochet",46.51333743,6.55947126
+Parent8588158,"St-Sulpice VD, centre",46.51007938,6.55810582
+Parent8588431,"Lausanne, Béthusy",46.52176295,6.6470031
+Parent8588432,"Lausanne, Chailly-Village",46.52317223,6.65522268
+Parent8588434,"Pully, Rosiaz",46.52159606,6.66221158
+Parent8588435,"Pully, Chenaulaz",46.52705991,6.67279373
+Parent8588436,"Belmont-sur-L., Grands Champs",46.52241197,6.67729429
+Parent8588438,"Lutry, Echerins",46.51846213,6.7008032
+Parent8588439,"Pully, port",46.50626468,6.66140309
+Parent8588440,"Pully, Somais",46.50670366,6.65753135
+Parent8588441,"Pully, Châtaignier",46.50646253,6.65380334
+Parent8588442,"Pully, Osches",46.50886761,6.65423454
+Parent8588445,"Pully, gare",46.5103205,6.65883391
+Parent8588446,"Pully, Clergère",46.51120457,6.66196903
+Parent8588447,"Pully, Rochettaz",46.51412255,6.66338837
+Parent8588448,"Pully, Boverattes",46.51632329,6.66584975
+Parent8588449,"Pully, Vallon",46.51804179,6.66709841
+Parent8588450,"Pully, Pré Pariset",46.51908028,6.66702655
+Parent8588451,"Lutry, Sapelle",46.51192172,6.70420781
+Parent8588452,"Lutry, Jordillon",46.50910255,6.70819633
+Parent8588453,"Aran, Pra Forny",46.50532487,6.7113584
+Parent8588454,"Grandvaux, Pra Grana",46.50281452,6.71465522
+Parent8588838,"Renens VD, gare nord",46.53754724,6.57933301
+Parent8588839,"Renens VD, 14 Avril",46.53932067,6.5797103
+Parent8588840,"Crissier, Noutes",46.54350995,6.57945877
+Parent8588841,"Crissier, scierie",46.54680925,6.57935996
+Parent8588842,"Crissier, Bré",46.55047902,6.57927012
+Parent8588843,"Crissier, centre",46.55369141,6.5769884
+Parent8588845,"Crissier, Timonet",46.555767,6.57370057
+Parent8588846,"Villars-Ste-Croix, Croix Péage",46.56115947,6.56550793
+Parent8588847,"Villars-Ste-Croix, village",46.56802746,6.56167213
+Parent8588848,"Villars-Ste-Croix, Le Sansy",46.56815097,6.56528336
+Parent8588850,"Mex VD, Les Esserts",46.57648154,6.56629845
+Parent8588851,"Mex VD, Trésy",46.57541945,6.56208535
+Parent8588853,"Mex VD, village",46.57808081,6.5541173
+Parent8588871,"Morges, St-Jean nord",46.51861667,6.507351
+Parent8588872,"Denges, Les Oches",46.52615137,6.54167563
+Parent8588873,"Ecublens VD, Pontet",46.52978545,6.56601997
+Parent8588874,"Echandens, poste",46.53016244,6.54101088
+Parent8588875,"Echandens, centre",46.5346058,6.54105579
+Parent8588898,"Préverenges, Capellan",46.51955625,6.52582037
+Parent8588983,"Renens VD, gare sud",46.53662033,6.57935097
+Parent8589523,"Lausanne, Bessières",46.52071215,6.63707671
+Parent8589525,"Epalinges, Planches",46.54451706,6.66669417
+Parent8590442,"Lausanne, Riponne-M. Béjart",46.52307333,6.63202818
+Parent8591818,"Lausanne, Flon",46.52056998,6.63057291
+Parent8591930,"Bussigny, Croix de Plan",46.54808196,6.56347774
+Parent8591931,"Bussigny, Buyère",46.54994154,6.56353164
+Parent8591933,"Chavannes-R., Planta",46.53419794,6.57302683
+Parent8591935,"Crissier, Arc-en-Ciel",46.54537587,6.56772677
+Parent8591936,"Crissier, Closalet",46.55349373,6.56953239
+Parent8591939,"Crissier, Zinguerie",46.54363353,6.5705385
+Parent8591940,"Cugy VD, Cavenette",46.58011225,6.63567534
+Parent8591944,"Ecublens VD, Argand",46.52033509,6.57186801
+Parent8591945,"Ecublens VD, Champagne",46.51831996,6.57299988
+Parent8591946,"Ecublens VD, Cocarde",46.52796226,6.56043245
+Parent8591947,"Ecublens VD, Coquerellaz",46.52437132,6.5608367
+Parent8591948,"Ecublens VD, Croset",46.53469231,6.56637032
+Parent8591949,"Ecublens VD, En Enjalin",46.52421062,6.55707275
+Parent8591950,"Ecublens VD, allée de Dorigny",46.52048344,6.58223457
+Parent8591951,"Ecublens VD, Motty",46.52587324,6.56157331
+Parent8591952,"Ecublens VD, Ormet",46.52360489,6.55886938
+Parent8591953,"Ecublens VD, Parc",46.53697256,6.56806813
+Parent8591954,"Ecublens VD, Perrettes",46.52620081,6.55845616
+Parent8591955,"Ecublens VD, place de sport",46.53526084,6.56382809
+Parent8591956,"Ecublens VD, Renges",46.5225294,6.55474612
+Parent8591957,"Ecublens VD, Stand",46.53275805,6.56248061
+Parent8591958,"Ecublens VD, Suchet-Forêt",46.53987061,6.57054748
+Parent8591959,"Ecublens VD, Champs-Courbes",46.51634184,6.55009284
+Parent8591960,"Ecublens VD, Veilloud",46.5312625,6.56449284
+Parent8591961,"Ecublens VD, Villars",46.52952588,6.56112416
+Parent8591962,"Epalinges, Ballègue",46.55488365,6.66985624
+Parent8591963,"Epalinges, Biolleyre",46.55246207,6.66840995
+Parent8591964,"Epalinges, Bois-Murat",46.54509166,6.65444115
+Parent8591965,"Epalinges, Girarde",46.54934228,6.67349442
+Parent8591966,"Epalinges, Croix-Blanche",46.54763713,6.67089828
+Parent8591967,"Epalinges, En Praz Bin",46.55072613,6.67150016
+Parent8591968,"Epalinges, Grand Chemin",46.55442034,6.68408555
+Parent8591969,"Epalinges, Polny",46.55404352,6.66551738
+Parent8591970,"Epalinges, Pré-d'Yverdon",46.54388685,6.67256915
+Parent8591971,"Epalinges, Tuileries",46.54449235,6.65785475
+Parent8591976,"La Conversion, gare",46.5127625,6.67822854
+Parent8591977,"Lausanne, Abeilles",46.54106316,6.64788345
+Parent8591978,"Lausanne, Allières/CHUV",46.52394484,6.64756904
+Parent8591979,"Lausanne, Alpes",46.51504984,6.63671739
+Parent8591980,"Lausanne, Aubépines",46.52736276,6.6192721
+Parent8591981,"Lausanne, avenue du Léman",46.51569894,6.64536816
+Parent8591982,"Lausanne, Barre",46.52574963,6.63602568
+Parent8591983,"Lausanne, Batelière",46.51637275,6.61296593
+Parent8591984,"Lausanne, Beaulieu",46.52812295,6.62360198
+Parent8591985,"Lausanne, jardin botanique",46.51257703,6.62305401
+Parent8591986,"Lausanne, Beau-Rivage",46.50830499,6.62750067
+Parent8591987,"Lausanne, Beau-Site",46.5349086,6.62073636
+Parent8591988,"Lausanne, Bel-Air",46.52228216,6.62907272
+Parent8591989,"Lausanne, Bellerive",46.51156933,6.61734073
+Parent8591990,"Lausanne, Belvédère",46.52090377,6.61713411
+Parent8591991,"Lausanne, Benj. Constant",46.51934608,6.63746299
+Parent8591992,"Lausanne, Bergières",46.53073719,6.61854447
+Parent8591993,"Lausanne, Béthanie",46.53458726,6.61349594
+Parent8591994,"Lausanne, Blécherette",46.54224332,6.62113162
+Parent8591995,"Lausanne, Bois de Vaux",46.51942644,6.59979663
+Parent8591996,"Lausanne, Bois-Gentil",46.53866568,6.62224553
+Parent8591997,"Lausanne, Boissonnet",46.53907351,6.64628445
+Parent8591998,"Lausanne, Boisy",46.5331103,6.61940685
+Parent8591999,"Lausanne, Bonne-Espérance",46.51506221,6.65042568
+Parent8592000,"Lausanne, Bossons",46.53933921,6.61725988
+Parent8592001,"Lausanne, Boston",46.5238954,6.62285638
+Parent8592002,"Lausanne, Boveresses",46.5354833,6.6636938
+Parent8592003,"Lausanne, casernes",46.53168892,6.62824627
+Parent8592004,"Lausanne, Cécil",46.52081723,6.62285638
+Parent8592005,"Lausanne, Cèdres",46.51480875,6.61915532
+Parent8592006,"Lausanne, Chalet-Fontaine",46.56775572,6.69970726
+Parent8592008,"Lausanne, Champ-Rond",46.53191758,6.650255
+Parent8592009,"Lausanne, Chandolin",46.51749781,6.6445507
+Parent8592010,"Lausanne, Chauderon",46.52359253,6.62482369
+Parent8592011,"Lausanne, Chauderon-Ale",46.52380268,6.62729406
+Parent8592012,"Lausanne, chemin du Cap",46.51462947,6.64932075
+Parent8592015,"Lausanne, Chevreuils",46.55849728,6.69672485
+Parent8592016,"Lausanne, Chocolatière",46.53633607,6.64085862
+Parent8592017,"Lausanne, CHUV",46.52640477,6.64148744
+Parent8592018,"Lausanne, Cigale",46.54329988,6.64718276
+Parent8592019,"Lausanne, Clochatte",46.54278087,6.63847809
+Parent8592020,"Lausanne, Closelet",46.51546403,6.63307023
+Parent8592021,"Lausanne, Cottages",46.52131173,6.61003742
+Parent8592022,"Lausanne, Couchirard",46.52513774,6.61314559
+Parent8592023,"Lausanne, Coudrette",46.52240578,6.65842068
+Parent8592024,"Lausanne, Cour",46.51256467,6.62580286
+Parent8592025,"Lausanne, Craivavers",46.53140464,6.65922019
+Parent8592026,"Lausanne, Croix d'Ouchy",46.512033,6.62958476
+Parent8592027,"Lausanne, Dapples",46.51475311,6.62542556
+Parent8592028,"Lausanne, Délices",46.51202063,6.62803966
+Parent8592029,"Lausanne, Denantou",46.50792785,6.63897216
+Parent8592030,"Lausanne, Désert",46.53987061,6.61234609
+Parent8592031,"Lausanne, Devin",46.53021806,6.65195281
+Parent8592032,"Lausanne, Dranse",46.53012536,6.61644241
+Parent8592033,"Lausanne, Druey",46.52984107,6.62765339
+Parent8592034,"Lausanne, Druey-Collège",46.52839489,6.63049206
+Parent8592035,"Lausanne, Ecole Commerce",46.52644804,6.62206587
+Parent8592036,"Lausanne, Ecole des Métiers",46.52422916,6.6171431
+Parent8592037,"Lausanne, Cojonnex/EHL",46.56182037,6.68254045
+Parent8592038,"Lausanne, Eglantine",46.51632948,6.6418827
+Parent8592039,"Lausanne, Elysée",46.51083982,6.63235158
+Parent8592040,"Lausanne, Epinettes",46.51592766,6.62562319
+Parent8592041,"Lausanne, EPSIC",46.52343183,6.62077229
+Parent8592042,"Lausanne, Fauconnières",46.52450112,6.64968906
+Parent8592043,"Lausanne, Faverges",46.51378872,6.6460419
+Parent8592044,"Lausanne, Figuiers",46.51684256,6.61066624
+Parent8592045,"Lausanne, Floreyres",46.51713928,6.64867396
+Parent8592046,"Lausanne, Fontenay",46.5166942,6.6188499
+Parent8592047,"Lausanne, Forêt",46.5355451,6.63334871
+Parent8592048,"Lausanne, Fourmi",46.53881398,6.6510545
+Parent8592049,"Prilly, Galicien",46.52809205,6.60406363
+Parent8592050,"Lausanne, gare",46.5176029,6.62965663
+Parent8592051,"Lausanne, Georgette",46.51782544,6.63811876
+Parent8592052,"Lausanne, Grancy",46.5149262,6.62887509
+Parent8592053,"Lausanne, Grande-Borde",46.52993996,6.63178564
+Parent8592054,"Lausanne, Grand Vennes",46.54011159,6.64623953
+Parent8592055,"Lausanne, Grangette",46.54135974,6.63324989
+Parent8592056,"Lausanne, Grattapaille",46.5366883,6.61888583
+Parent8592057,"Lausanne, Grey",46.53354907,6.61912837
+Parent8592058,"Lausanne, Haute Combe",46.54482599,6.68481319
+Parent8592059,"Lausanne, Hermitage",46.53018098,6.6362323
+Parent8592060,"Lausanne, Beaulieu-Jomini",46.52727623,6.62639574
+Parent8592061,"Lausanne, Jordils",46.509931,6.62743779
+Parent8592062,"Lausanne, Jurigoz",46.51273159,6.63653772
+Parent8592063,"Lausanne, Lac Sauvabelin",46.53799215,6.63904402
+Parent8592064,"Lausanne, Languedoc",46.51789961,6.61709818
+Parent8592065,"Lausanne, Les Chavannes",46.53025515,6.65707321
+Parent8592066,"Lausanne, Libellules",46.54071714,6.64415544
+Parent8592067,"Lausanne, Lisière",46.53243052,6.63751689
+Parent8592068,"Lausanne, Maladière",46.51742981,6.6054111
+Parent8592070,"Lausanne, Mauvernay",46.56454416,6.68891849
+Parent8592071,"Lausanne, Mémise",46.5274431,6.63323192
+Parent8592072,"Lausanne, Mirabeau",46.51691674,6.63479499
+Parent8592073,"Lausanne, Molliettes",46.55291304,6.69320345
+Parent8592074,"Lausanne, Mon Repos",46.51881448,6.64109218
+Parent8592075,"Lausanne, Mont d'Or",46.51694765,6.61514884
+Parent8592076,"Lausanne, Mont-Blanc",46.53013154,6.6269527
+Parent8592077,"Lausanne, Montchoisi",46.5111242,6.63702281
+Parent8592078,"Lausanne, Montétan",46.52923541,6.61416069
+Parent8592079,"Lausanne, Mont-Fleuri",46.51448729,6.63178564
+Parent8592080,"Lausanne, Montoie",46.51829523,6.60857317
+Parent8592081,"Lausanne, Montolieu",46.54317013,6.64391289
+Parent8592082,"Lausanne, Motte",46.533203,6.63341159
+Parent8592083,"Lausanne, Mousquines",46.51683638,6.64713784
+Parent8592084,"Lausanne, Musée Olympique",46.50960951,6.63518127
+Parent8592085,"Lausanne, Oiseaux",46.53104002,6.62953087
+Parent8592086,"Lausanne, Ouchy-Olympique",46.50747033,6.62663829
+Parent8592087,"Lausanne, Parc Rivier",46.53607654,6.61545426
+Parent8592088,"Lausanne, Parc Vélodrome",46.53602092,6.6237547
+Parent8592089,"Lausanne, Pavement",46.54112495,6.63413922
+Parent8592090,"Lausanne, Pêcheurs",46.50979499,6.62007161
+Parent8592091,"Lausanne, Petit Château",46.52765324,6.63554059
+Parent8592092,"Lausanne, Piécettes",46.54174283,6.63626823
+Parent8592094,"Lausanne, Pierrefleur",46.53467995,6.61667597
+Parent8592096,"Lausanne, Pont Chauderon",46.52323404,6.6243925
+Parent8592097,"Lausanne, Pont Marc Dufour",46.51903701,6.61809531
+Parent8592098,"Lausanne, Port-Franc",46.52216472,6.62710541
+Parent8592099,"Lausanne, Praz-Berthoud",46.53655853,6.6487638
+Parent8592100,"Lausanne, Praz-Collet",46.56015885,6.69630264
+Parent8592101,"Lausanne, Praz-Séchaud",46.53757813,6.66701756
+Parent8592102,"Lausanne, Prélaz",46.52633061,6.61248982
+Parent8592103,"Lausanne, Prélaz-les-Roses",46.52704755,6.60683044
+Parent8592104,"Lausanne, Presbytère",46.52905618,6.62143704
+Parent8592105,"Lausanne, Provence nord",46.52413645,6.60613874
+Parent8592106,"Lausanne, Provence sud",46.52173823,6.60825876
+Parent8592107,"Lausanne, Rapille",46.53654618,6.61220236
+Parent8592109,"Lausanne, Recordon",46.52555185,6.61801446
+Parent8592110,"Lausanne, Riant-Cour",46.51558148,6.61602919
+Parent8592111,"Lausanne, Rouvraie",46.53260973,6.63164191
+Parent8592112,"Lausanne, Rozavère",46.52889549,6.65552811
+Parent8592114,"Lausanne, Sablons",46.52238106,6.59574523
+Parent8592115,"Lausanne, Signal",46.53258501,6.64045438
+Parent8592116,"Lausanne, Stade Olympique",46.53383334,6.62606337
+Parent8592117,"Lausanne, Ste-Catherine",46.57097326,6.70864549
+Parent8592118,"Lausanne, St-Etienne",46.53467377,6.64905126
+Parent8592119,"Lausanne, St-Paul",46.52721442,6.61787972
+Parent8592120,"Lausanne, St-Roch",46.52557657,6.62613523
+Parent8592121,"Lausanne, Théâtre de Vidy",46.51419055,6.61160948
+Parent8592122,"Lausanne, Tivoli",46.5211572,6.62159874
+Parent8592123,"Lausanne, Trabandan",46.51453674,6.64440697
+Parent8592124,"Lausanne, Valency",46.53133666,6.61132201
+Parent8592125,"Lausanne, Valentin",46.52455056,6.63128258
+Parent8592126,"Lausanne, Vallonnette",46.52845669,6.64851227
+Parent8592127,"Lausanne, Valmont",46.53523612,6.65541133
+Parent8592128,"Lausanne, Vennes",46.54129796,6.6576122
+Parent8592129,"Lausanne, Verdeil",46.5182396,6.64968906
+Parent8592130,"Lausanne, Vert-Bois/EHL",46.56049857,6.6849659
+Parent8592131,"Lausanne, Victor-Ruffy",46.53165184,6.64848532
+Parent8592132,"Lausanne, Vieux-Moulin",46.53324008,6.6300968
+Parent8592133,"Lausanne, Vigie",46.52153425,6.62392538
+Parent8592134,"Lausanne, Villard",46.51955625,6.62371877
+Parent8592135,"Lausanne, Vinet",46.52640477,6.62867747
+Parent8592136,"Lausanne, Virgile-Rossel",46.52615755,6.6484943
+Parent8592137,"Lausanne, Cascades",46.54015485,6.64120896
+Parent8592138,"Lausanne, Vulliemin",46.5277274,6.63407634
+Parent8592139,"Le Mont-sur-L., Budron",46.57549355,6.63353735
+Parent8592140,"Le Mont-sur-L., Côtes",46.54996625,6.63162394
+Parent8592141,"Le Mont-sur-L., Etavez",46.56617467,6.63398651
+Parent8592142,"Le Mont-sur-L., Fougères",46.57098561,6.63400448
+Parent8592143,"Le Mont-sur-L., Martines",46.54633352,6.6318575
+Parent8592144,"Montpreveyres, Riau-Graubon",46.57509217,6.72420431
+Parent8592145,"Lutry, avenue William",46.50942404,6.68178587
+Parent8592146,"Lutry, Brélaz",46.51318288,6.69754232
+Parent8592147,"Lutry, Brûlées",46.5144502,6.69052647
+Parent8592149,"Lutry, Corsy-Dessous",46.51357853,6.68013297
+Parent8592150,"Lutry, Grand-Pont",46.50411299,6.68097738
+Parent8592151,"Lutry, Colline",46.51062962,6.67932448
+Parent8592152,"Lutry, Corsy-Dessus",46.51487057,6.68630439
+Parent8592153,"Lutry, Gravesse",46.51131586,6.69569179
+Parent8592154,"Lutry, Les Champs",46.50475603,6.68697813
+Parent8592155,"Lutry, Corniche",46.5006998,6.6940838
+Parent8592156,"Lutry, port",46.501819,6.68406759
+Parent8592157,"Lutry, Marionnettes",46.5126574,6.68514556
+Parent8592158,"Lutry, Orzens",46.50698807,6.68346571
+Parent8592159,"Lutry, Ponfilet",46.51312106,6.68957426
+Parent8592160,"Lutry, Rive",46.5013738,6.68986172
+Parent8592161,"Lutry, Savoie",46.5161193,6.70110863
+Parent8592162,"Lutry, Savuit-place",46.50727248,6.69373346
+Parent8592164,"Lutry, Voisinand",46.50368017,6.68632236
+Parent8592167,"Paudex, Marronnier",46.50573913,6.67541681
+Parent8592168,"Paudex, Verrière",46.50580714,6.67104201
+Parent8592169,"Paudex, village",46.50666656,6.67291949
+Parent8592170,"Pully, Bourdonnière",46.50653054,6.64658987
+Parent8592171,"Pully, Bruyère",46.52393866,6.66302006
+Parent8592172,"Pully, C. F. Ramuz",46.50953532,6.64818887
+Parent8592173,"Prilly, centre",46.53456872,6.60523144
+Parent8592175,"Prilly, Chasseur",46.53914148,6.60660586
+Parent8592176,"Prilly, Coudraie",46.54029079,6.6096781
+Parent8592177,"Pully, Daillettes",46.5229868,6.66618213
+Parent8592178,"Prilly, église",46.53896846,6.59893425
+Parent8592179,"Prilly, Flumeaux",46.5299585,6.60067698
+Parent8592180,"Prilly, Grand Vigne",46.531726,6.60395583
+Parent8592181,"Prilly, Huttins",46.53324008,6.60842046
+Parent8592182,"Pully, Joliette",46.50989391,6.65323741
+Parent8592183,"Pully, Les Liaudes",46.51784398,6.65656117
+Parent8592185,"Pully, Margerol",46.51993331,6.66095393
+Parent8592186,"Pully, Métairie",46.51006702,6.64081371
+Parent8592187,"Prilly, Mont-Goulin",46.53862861,6.6110615
+Parent8592188,"Pully, Montillier",46.51236684,6.65765712
+Parent8592189,"Pully, Moulins",46.50841009,6.67000895
+Parent8592190,"Pully, Perraudettaz",46.51404219,6.65427945
+Parent8592191,"Pully, Pavillard",46.51972314,6.65853747
+Parent8592192,"Prilly, Perréaz",46.53695402,6.60244666
+Parent8592193,"Pully, Pierraz-Portay",46.50936839,6.6434817
+Parent8592194,"Pully, Ravessoud",46.53917237,6.69691349
+Parent8592195,"Pully, Reymondin",46.50924474,6.66562517
+Parent8592196,"Pully, Roses",46.51509311,6.6565971
+Parent8592197,"Pully, Tour Haldimand",46.50662947,6.64251152
+Parent8592198,"Pully, Verney",46.50646871,6.64972499
+Parent8592199,"Pully, Vignes",46.50721683,6.66550839
+Parent8592201,"Renens VD, 1er Mai",46.54073567,6.58337543
+Parent8592202,"Renens VD, Avenir",46.53854828,6.58279152
+Parent8592203,"Renens VD, Baumettes",46.54392392,6.59000499
+Parent8592204,"Renens VD, Bois-Genoud",46.54630263,6.58426476
+Parent8592205,"Renens VD, Borjod",46.53959255,6.58870244
+Parent8592206,"Renens VD, Bourg-Dessus",46.53822696,6.59481996
+Parent8592207,"Renens VD, Broye",46.53540915,6.59820661
+Parent8592208,"Renens VD, Bugnon",46.53982736,6.59614049
+Parent8592209,"Renens VD, Censuy",46.53238108,6.58396831
+Parent8592210,"Renens VD, Chêne",46.52905,6.59012177
+Parent8592211,"Renens VD, Florissant",46.53267153,6.59849407
+Parent8592212,"Renens VD, Follieu",46.53967288,6.59295147
+Parent8592213,"Renens VD, Hôtel-de-Ville",46.5360271,6.58669919
+Parent8592214,"Renens VD, Industrie",46.54105698,6.58093201
+Parent8592215,"Renens VD, Longemalle",46.52557657,6.59659863
+Parent8592217,"Renens VD, Perrelet",46.5301439,6.59898815
+Parent8592218,"Renens VD, Caudray",46.531726,6.58591766
+Parent8592219,"Renens VD, rue du Lac",46.52739366,6.59225976
+Parent8592220,"Renens VD, Saugiaz",46.54027843,6.5863219
+Parent8592221,"Renens VD, Sous l'Eglise",46.53506927,6.5886665
+Parent8592222,"Renens VD, Sur-la-Croix",46.541403,6.59323893
+Parent8592223,"Renens VD, village",46.53267771,6.59221485
+Parent8592226,"St-Sulpice VD, Russel",46.51513639,6.56390893
+Parent8592227,"St-Sulpice VD, Pâqueret",46.5164902,6.57063732
+Parent8592228,"Savigny, ancienne poste",46.53987679,6.72478822
+Parent8592229,"Savigny, Clair-Matin",46.5502319,6.74698559
+Parent8592230,"Savigny, Crêt-Rouge",46.54341728,6.7388738
+Parent8592231,"Savigny, Grange-la-Ville",46.55223968,6.74818035
+Parent8592232,"Savigny, Palaz",46.54147096,6.73508291
+Parent8592233,"Savigny, Publoz",46.54183552,6.71568828
+Parent8592234,"Savigny, St-Amour",46.54782866,6.74563812
+Parent8592239,"Denges, La Pale",46.51888247,6.54219665
+Parent8592240,"Denges, Pierraz-Mur",46.51515493,6.53660913
+Parent8592241,"Denges, Sur les Moulins",46.51505602,6.54182834
+Parent8592242,"Denges, village",46.52326494,6.54054375
+Parent8592243,"Echandens, Riaz",46.53655853,6.54213377
+Parent8592244,"Echandens, Chocolatière",46.53645966,6.54683196
+Parent8592248,"Ecublens VD, Larges Pièces",46.53201028,6.55531206
+Parent8592249,"Lonay, Carouge",46.52666436,6.52577545
+Parent8592251,"Lonay, Grassiaz",46.52203492,6.51292056
+Parent8592252,"Lonay, Gracieuse",46.52006312,6.50960577
+Parent8592253,"Lonay, Levant",46.52279519,6.51549872
+Parent8592254,"Lonay, parc",46.52840725,6.51665755
+Parent8592255,"Lonay, Vozy",46.52805497,6.52959329
+Parent8592259,"Morges, Bief",46.51714546,6.51228275
+Parent8592260,"Morges, Blancherie",46.51474693,6.50330858
+Parent8592263,"Morges, de Beausobre",46.51673129,6.50192518
+Parent8592268,"Morges, Grosse-Pierre",46.51776362,6.50108975
+Parent8592272,"Morges, St-Jean sud",46.51678692,6.50894102
+Parent8592274,"Morges, Auguste-Forel",46.51754726,6.50347926
+Parent8592279,"Préverenges, Taudaz",46.51781307,6.51773553
+Parent8593249,"Le Mont-sur-L., Rionzi",46.54344817,6.63272887
+Parent8593779,"Vufflens-la-Ville,grande salle",46.58153237,6.54201699
+Parent8593780,"Vufflens-la-Ville, Cuvillard",46.57962447,6.53493827
+Parent8593781,"Vufflens-la-Ville, église",46.5770064,6.53935798
+Parent8593782,"Vufflens-la-Ville, gare",46.5771793,6.531345
+Parent8593795,"Belmont-sur-L., Chaffeises",46.51411637,6.67360221
+Parent8593798,"Belmont-sur-L., Burenoz",46.52119429,6.6725422
+Parent8593806,"Belmont-sur-L., Rouvène",46.52139826,6.67477901
+Parent8593815,"Crissier, Jura",46.54200852,6.57326938
+Parent8593816,"Crissier, Marcolet",46.54693282,6.57486838
+Parent8593817,"Crissier, Feleire",46.55152306,6.57069121
+Parent8593819,"Epalinges, Bois-de-Ban",46.55479716,6.66546348
+Parent8593820,"Epalinges, Florimont",46.54823023,6.65890577
+Parent8593821,"Epalinges, Giziaux",46.54864417,6.67455443
+Parent8593822,"Epalinges, Montéclard",46.55136244,6.66222954
+Parent8593837,"Lausanne, Maladière-Figuiers",46.51691674,6.60612975
+Parent8593838,"Lausanne, Maladière-Lac",46.51619348,6.6054111
+Parent8593844,"Lausanne,Vallée de la Jeunesse",46.52328967,6.60768384
+Parent8593845,"Le Mont-sur-L., Coppoz-Poste",46.55690978,6.63545076
+Parent8593849,"Cery-Fleur-de-Lys, gare",46.54464681,6.60525839
+Parent8593850,"Pully, Caudoz",46.51181662,6.66713434
+Parent8593856,"Lutry, Bossières",46.50977026,6.69696739
+Parent8593861,"Lutry, gare",46.50378528,6.69023003
+Parent8593866,"Chavannes-R., Préfaully",46.53358615,6.57909945
+Parent8593867,"Chavannes-R., Plaine",46.52856794,6.5723531
+Parent8593868,"Chavannes-R., Concorde",46.532344,6.57432041
+Parent8593869,"Chavannes-R., Glycines",46.53628046,6.57657518
+Parent8594177,"Bussigny, Cocagne",46.55472921,6.56182484
+Parent8594178,"Bussigny, Rente",46.55708892,6.56241773
+Parent8594270,"Mex VD, Faraz",46.56622408,6.55051505
+Parent8594890,"Ecublens VD, Montaney",46.51882066,6.55278779
+Parent8594986,"Chavannes-R., Berges",46.52749255,6.57496719
+Parent8594987,"Chavannes-R., Mouline",46.52617609,6.57934199
+Parent8594988,"St-Sulpice VD, Venoge nord",46.51382582,6.54561923
+Parent8595004,"Lausanne, Entre-Bois",46.54106934,6.63147123
+Parent8595005,"Le Mont-sur-L., Maillefer",46.5424534,6.62672812
+Parent8595147,"Cheseaux-sur-L., Châtelard",46.57809934,6.59226875
+Parent8595148,"Crissier, Chisaz",46.55039871,6.57696145
+Parent8595190,"Belmont-sur-L., Malavaux",46.52060707,6.67636004
+Parent8595191,"Pully,Centre Sportif Rochettaz",46.51177335,6.67004488
+Parent8595192,"Pully, Ruisselet",46.51283668,6.66452923
+Parent8595213,"Echandens, collège",46.53233782,6.54100189
+Parent8595214,"Bussigny, Bosquet",46.54546237,6.55456645
+Parent8595215,"Bussigny, Reculan",46.54216299,6.55435984
+Parent8595216,"Bussigny, gare sud",46.54692664,6.55195236
+Parent8595217,"Bussigny, Vallon",46.54344817,6.55365916
+Parent8595218,"Lonay-Préverenges, gare sud",46.52320931,6.52104133
+Parent8595219,"Lonay, Pressoirs",46.52552094,6.51990047
+Parent8595220,"Lonay, collège sud",46.52470508,6.52165218
+Parent8595223,"St-Sulpice VD, Parc Scient.",46.51658293,6.56378317
+Parent8595516,"Crissier, Mongevon",46.54840322,6.57344904
+Parent8595521,"Lausanne, Bourdonnette nord",46.52489051,6.58922346
+Parent8595534,"Renens VD, piscine",46.53040347,6.58527087
+Parent8595602,"Chavannes-R., Dorigny",46.52675707,6.58391441
+Parent8595625,"Belmont-sur-L., Pâquis",46.52022383,6.67717751
+Parent8595728,"Grandvaux, Genevrey",46.49878287,6.71619134
+Parent8595729,"Grandvaux, gare sud",46.49660616,6.72067393
+Parent8595731,"Riex, Mouniaz",46.49365632,6.73422053
+Parent8595933,"Lausanne, Parc Musée Olympique",46.50734049,6.63289056
+Parent8595934,"Lausanne, Siège du CIO",46.51755963,6.59907798
+Parent8595935,"Lausanne, Stade de Coubertin",46.51538366,6.60269819
+Parent8595936,"Lausanne, Tour Haldimand-Lac",46.50531869,6.64074184
+Parent8595937,"Lausanne, sports UNIL-EPFL",46.5210583,6.58583681
+Parent8595938,"Lausanne, Vidy-Port",46.51451202,6.60700112
+Parent8595939,"Lausanne, Parc Bourget",46.51888866,6.5936252
+Parent8595978,"Villars-Ste-Croix, Colice",46.56253684,6.56629845
+Parent8595986,"Crissier, Lentillières",46.55083115,6.57249683
+Parent8596052,"Echichens, Crêt",46.52448876,6.50380266
+Parent8596053,"Ecublens VD, Blévallaire",46.51956861,6.57729383

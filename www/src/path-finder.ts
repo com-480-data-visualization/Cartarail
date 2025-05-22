@@ -5,17 +5,23 @@ import {
   ICompare
 } from '@datastructures-js/priority-queue';
 
+const base = import.meta.env.BASE_URL;
+
 // Station, identified by its id in the dataset.
 type Station = string;
 
-const base = import.meta.env.BASE_URL;
-const target = "lausanne";
-const stationTableUrl = `${base}${target}/stations.csv`;
-const transportTableUrl = `${base}${target}/transport_table.csv`;
-const walkTableUrl = `${base}${target}/walk_table.csv`;
-
-
 // =========== load data ==========
+
+enum Target {
+  Lausanne = "lausanne",
+  Train = "train"
+}
+
+enum Table {
+  Station = "stations",
+  Transport = "transport_table",
+  Walk = "walk_table"
+}
 
 interface StationTableRecord {
   stop_id: Station;
@@ -62,12 +68,21 @@ function parseDepartureArrivalTime(s: string): [string, string][] {
   }
 }
 
-let allLoaded = false, stationLoaded = false, transportLoaded = false, walkLoaded = false;
+const loaded = new Map<Target, Map<Table, boolean>>();
+Object.values(Target).forEach(target => {
+  loaded.set(target, new Map<Table, boolean>());
+});
+const allLoaded = new Map<Target, boolean>();
 const stationIdMap = new Map<Station, string>(), stationNameMap = new Map<string, Station>();
 
-function loadStationCSVToMap(url: string) {
-  if (stationLoaded) return;
-  return fetch(url)
+function getDbTableName(target: Target, table: Table): string {
+  return `${target}_${table}`;
+}
+
+function loadStationCSVToMap(target: Target) {
+  if (loaded.get(target)?.get(Table.Station)) return;
+
+  return fetch(`${base}${target}/${Table.Station}.csv`)
     .then(response => {
       if (!response.ok) throw new Error("Failed to get the csv file.");
       return response.text();
@@ -84,7 +99,8 @@ function loadStationCSVToMap(url: string) {
         stationIdMap.set(row.stop_id, row.stop_name);
         stationNameMap.set(row.stop_name, row.stop_id);
       }
-      stationLoaded = true;
+      loaded.get(target)?.set(Table.Station, true);
+      console.log(`${target} ${Table.Station}.csv is loaded into memory.`);
     })
     .catch(error => {
       console.error("Failed to load or parse CSV:", error);
@@ -92,10 +108,10 @@ function loadStationCSVToMap(url: string) {
     });
 }
 
-async function loadTransportCSVToDB(url: string){
-  if (transportLoaded) return;
+async function loadTransportCSVToDB(target: Target){
+  if (loaded.get(target)?.get(Table.Transport)) return;
 
-  const response = await fetch(url); // ('/lausanne/transport_table.csv');
+  const response = await fetch(`${base}${target}/${Table.Transport}.csv`);
   const csvText = await response.text();
 
   const parsed = Papa.parse<RawTransportTableRecord>(csvText, {
@@ -118,17 +134,18 @@ async function loadTransportCSVToDB(url: string){
     departure_arrival_time: parseDepartureArrivalTime(r.departure_arrival_time),
   }));
 
-  alasql('CREATE TABLE transport_table');
-  alasql.tables.transport_table.data = records;
+  const name = getDbTableName(target, Table.Transport);
+  alasql(`CREATE TABLE ${name}`);
+  alasql.tables[name].data = records;
 
-  transportLoaded = true;
-  console.log('Transport table csv is loaded into memory.');
+  loaded.get(target)?.set(Table.Transport, true);
+  console.log(`${target} ${Table.Transport}.csv is loaded into memory.`);
 }
 
-async function loadWalkCSVToDB(url: string) {
-  if (walkLoaded) return;
+async function loadWalkCSVToDB(target: Target) {
+  if (loaded.get(target)?.get(Table.Walk)) return;
 
-  const response = await fetch(url); // ('/lausanne/walk_table.csv');
+  const response = await fetch(`${base}${target}/${Table.Walk}.csv`);
   const csvText = await response.text();
 
   const parsed = Papa.parse<WalkTableRecord>(csvText, {
@@ -142,21 +159,24 @@ async function loadWalkCSVToDB(url: string) {
     return;
   }
 
-  // Load into AlaSQL
-  alasql('CREATE TABLE walk_table');
-  alasql.tables.walk_table.data = parsed.data;
+  const name = getDbTableName(target, Table.Walk);
+  alasql(`CREATE TABLE ${name}`);
+  alasql.tables[name].data = parsed.data;
 
-  walkLoaded = true;
-  console.log('Walk table CSV is loaded into memory.');
+  loaded.get(target)?.set(Table.Walk, true);
+  console.log(`${target} ${Table.Walk}.csv is loaded into memory.`);
 }
 
-async function loadCSV() {
+async function loadCSV(target: Target) {
   await Promise.all([
-    loadStationCSVToMap(stationTableUrl),
-    loadTransportCSVToDB(transportTableUrl),
-    loadWalkCSVToDB(walkTableUrl)
+    loadStationCSVToMap(target),
+    loadTransportCSVToDB(target),
+    loadWalkCSVToDB(target)
   ]);
-  allLoaded = stationLoaded && transportLoaded && walkLoaded;
+
+  allLoaded.set(target, Object.values(Table).every(table =>
+    loaded.get(target)?.get(table) === true
+  ));
 }
 
 // =========== shortest path ==========
@@ -216,9 +236,9 @@ function getClosest(time: Date, departureArrivalTime: [string, string][]): [Date
   return null;
 }
 
-async function dijkstra(startStation: Station, startTime: Date) {
-  if (allLoaded == false) {
-    await loadCSV();
+async function dijkstra(target: Target, startStation: Station, startTime: Date) {
+  if (!allLoaded.has(target) || allLoaded.get(target) === false) {
+    await loadCSV(target);
   }
 
   let earliest = new Map<Station, Arrival>();
@@ -240,7 +260,7 @@ async function dijkstra(startStation: Station, startTime: Date) {
     }
     earliest.set(cur.station, cur);
     // reachable by public transportation
-    const tranRecords = alasql(`SELECT * FROM transport_table WHERE start_station = "${cur.station}"`) as TransportTableRecord[];
+    const tranRecords = alasql(`SELECT * FROM ${getDbTableName(target, Table.Transport)} WHERE start_station = "${cur.station}"`) as TransportTableRecord[];
     for (const record of tranRecords) {
       let at = cur.arrivalTime; if (record.route_desc != cur.routeDesc || record.route_short_name != cur.routeShortName) {
         // change routes within the station (takes: 3 mins)
@@ -260,7 +280,7 @@ async function dijkstra(startStation: Station, startTime: Date) {
       }
     }
     // reachable by foot
-    const walkRecords = alasql(`SELECT * FROM walk_table WHERE start_station = "${cur.station}"`) as WalkTableRecord[];
+    const walkRecords = alasql(`SELECT * FROM ${getDbTableName(target, Table.Walk)} WHERE start_station = "${cur.station}"`) as WalkTableRecord[];
     for (const record of walkRecords) {
       const totalWalkTime: number = cur.totalWalkTime + +record.walk_time;
       if (totalWalkTime >= 10) continue;
@@ -343,8 +363,8 @@ function getPathString(earliest: Map<Station, Arrival>, dest: Station, startTime
 
 // ========== UI ==========
 
-async function ui() {
-  await loadStationCSVToMap(stationTableUrl);
+async function ui(target: Target) {
+  await loadStationCSVToMap(target);
 
   const stationList = document.getElementById('stationList');
   if (stationList) {
@@ -364,7 +384,7 @@ async function ui() {
 
       const startStation = stationNameMap.get(startStationName);
       if (!startStation) return;
-      const earliest = await dijkstra(startStation, startTime);
+      const earliest = await dijkstra(target, startStation, startTime);
       const result = document.getElementById('result');
       if (!result) return;
 
@@ -378,5 +398,4 @@ async function ui() {
   }
 }
 
-(async () => { await ui(); })();
-
+(async () => { await ui(Target.Lausanne); })();

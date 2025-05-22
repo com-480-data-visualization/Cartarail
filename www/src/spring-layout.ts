@@ -26,7 +26,12 @@ d3selection.select("#basemap")
     .style("z-index", "-1");
 
 const homography = new Homography("piecewiseaffine");
-const basemapContext = document.getElementById("basemap").getContext("2d");
+
+const basemapElement = document.getElementById("basemap");
+if (!(basemapElement && (basemapElement instanceof HTMLCanvasElement))) {
+    throw new Error("Could not find canvas element with ID 'basemap'!");
+}
+const basemapContext = basemapElement.getContext("2d")!;
 const basemapImage = new Image();
 basemapImage.crossOrigin = "anonymous";
 basemapImage.src = "/basemap.png";
@@ -36,12 +41,12 @@ basemapImage.addEventListener("load", () => {
     homography.setImage(basemapContext.getImageData(0, 0, width, height));
 });
 
-function E2X(Ecoord) {
+function E2X(Ecoord: number): number {
     let Erel = (Ecoord - ref1E) / (ref2E - ref1E);
     return (ref1X + Erel * (ref2X - ref1X)) * width / basemapOriginalWidth;
 }
 
-function N2Y(Ncoord) {
+function N2Y(Ncoord: number): number {
     let Nrel = (Ncoord - ref1N) / (ref2N - ref1N);
     return (ref1Y + Nrel * (ref2Y - ref1Y)) * height / basemapOriginalHeight;
 }
@@ -55,7 +60,7 @@ d3selection.select('#spring-layout').style("position", "relative").append(() => 
 
 
 // E, N are meters in relation to the observatory in Bern, which is at 2600000/1200000
-const nodes = [
+const nodesRaw = [
     {'name': 'St. Gallen', 'E': 2745713.03, 'N': 1254279.06},
     {'name': 'Zürich HB', 'E': 2683190.01, 'N': 1248066.09},
     {'name': 'Bern', 'E': 2600038.01, 'N': 1199749.94},
@@ -67,22 +72,27 @@ const nodes = [
 
 const source = 'Lausanne';
 
-for (let station of nodes) {
-    station.x = E2X(station.E);
-    station.y = N2Y(station.N);
-    station.xGeo = E2X(station.E);
-    station.yGeo = N2Y(station.N);
-    if (station.name == source) {
-        station.fx = station.x;
-        station.fy = station.y;
+const nodes = nodesRaw.map((station) => {
+    let x = E2X(station.E);
+    let y = N2Y(station.N);
+    return {
+        'name': station.name,
+        'x': x, 'y': y,
+        'xGeo': x, 'yGeo': y,
+        'fx': (station.name == source)? x: undefined,
+        'fy': (station.name == source)? y: undefined,
     }
+});
+
+const pinnedCorners: [number, number][] = [[0, 0], [width, 0], [0, height], [width, height]];
+homography.setSourcePoints(nodes.map((s) => <[number, number]>[s.xGeo, s.yGeo]).concat(pinnedCorners));
+
+interface TargetsObject {
+    [index: string]: {time: number, prev?: string};
 }
 
-const pinnedCorners = [[0, 0], [width, 0], [0, height], [width, height]];
-homography.setSourcePoints(nodes.map((s) => [s.xGeo, s.yGeo]).concat(pinnedCorners));
-
 // time is in minutes
-const targets = {
+const targets: TargetsObject = {
     'St. Gallen': {'time': 208, 'prev': 'Zürich HB'},
     'Zürich HB': {'time': 142, 'prev': 'Bern'},
     'Bern': {'time': 90, 'prev': 'Fribourg/Freiburg'},
@@ -96,24 +106,24 @@ const speed = 70        // km/hr
     * 1000              //  m/hr
     / 60                //  m/min
     * scale;            // px/min
-for (const target in targets) {
-    let t = targets[target];
-    links.push({'source': source, 'target': target, 'time': t.time * speed});
-    if ('prev' in t) {
-        links.push({'source': t.prev, 'target': target, 'time': (t.time - targets[t.prev].time) * speed});
+for (const [target, info] of Object.entries(targets)) {
+    links.push({'source': source, 'target': target, 'time': info.time * speed});
+    if (info.prev) {
+        links.push({'source': info.prev, 'target': target,
+                    'time': (info.time - targets[info.prev].time) * speed});
     }
 }
 
 const travelTimeToGeographyBias = 20;
-const simulation = d3force.forceSimulation(nodes)
+d3force.forceSimulation(nodes)
     .force(
         "link",
         d3force.forceLink(links)
-            .id((n) => n.name)
+            .id((n: any) => n.name)
             .distance((l) => l.time)
             .strength(1))
-    .force("xGeo", d3force.forceX().x((n) => n.xGeo).strength(1/travelTimeToGeographyBias))
-    .force("yGeo", d3force.forceY().y((n) => n.yGeo).strength(1/travelTimeToGeographyBias))
+    .force("xGeo", d3force.forceX().x((n: any) => n.xGeo).strength(1/travelTimeToGeographyBias))
+    .force("yGeo", d3force.forceY().y((n: any) => n.yGeo).strength(1/travelTimeToGeographyBias))
     .velocityDecay(0.1)
     .stop()
     .tick(2000);
@@ -124,10 +134,10 @@ svg.append("g")
     .selectAll("line")
     .data(links)
     .join("line")
-    .attr("x1", d => d.source.x)
-    .attr("y1", d => d.source.y)
-    .attr("x2", d => d.target.x)
-    .attr("y2", d => d.target.y);
+    .attr("x1", (d: any) => d.source.x)
+    .attr("y1", (d: any) => d.source.y)
+    .attr("x2", (d: any) => d.target.x)
+    .attr("y2", (d: any) => d.target.y);
 
 svg.append("g")
     .attr("fill", "black")
@@ -151,7 +161,7 @@ svg.append("g")
     .attr("cy", d => d.y);
 
 function warpBasemap() {
-    homography.setDestinyPoints(nodes.map((s) => [s.x, s.y]).concat(pinnedCorners));
+    homography.setDestinyPoints(nodes.map((s) => <[number, number]>[s.x, s.y]).concat(pinnedCorners));
     basemapContext.clearRect(0, 0, width, height);
     basemapContext.putImageData(homography.warp(), 0, 0);
 }

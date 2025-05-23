@@ -11,7 +11,7 @@ const base = import.meta.env.BASE_URL;
 
 // =========== load data ==========
 
-enum Dataset {
+export enum Dataset {
   Lausanne = "lausanne",
   Train = "train"
 }
@@ -353,7 +353,7 @@ function getPathString(earliest: Map<Station, TargetInfo>, dest: Station, startT
 
 // ========== UI ==========
 
-async function ui(target: Dataset) {
+export async function ui(target: Dataset) {
   await loadStationCSVToMap(target);
 
   const stationList = document.getElementById('stationList');
@@ -387,5 +387,3 @@ async function ui(target: Dataset) {
     }
   }
 }
-
-(async () => { await ui(Dataset.Lausanne); })();

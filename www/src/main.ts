@@ -1,24 +1,42 @@
-// import type { BasemapReference, Config } from "./types";
-import { ui, Dataset } from "./path-finder";
-// import { drawCartogram } from "./spring-layout";
+import { Dataset, geostations, loadStationCSVToMap, dateSetTime,
+         stationIdMap, stationNameMap, dijkstra, getPathString } from "./path-finder";
+import { drawCartogram, configLausanne } from "./spring-layout";
 
-/*
-const basemap1: BasemapReference = {
-    ref1X: 10,
-    ref1E: 2485375.28,
-    ref1Y: 1083,
-    ref1N: 1110091.73,
-    ref2X: 1595,
-    ref2E: 2759808.80,
-    ref2Y: 199,
-    ref2N: 1263143.64,
+async function ui(target: Dataset) {
+  await loadStationCSVToMap(target);
 
-    path: "/basemap.png",
-    originalWidth: 2032,
-    originalHeight: 1293,
-};
+  const stationList = document.getElementById('stationList');
+  if (stationList) {
+    for (const key of stationNameMap.keys()) {
+      const option = document.createElement('option');
+      option.value = key;
+      stationList.appendChild(option);
+    }
+  }
 
-const config1: Config = { br: basemap1, scale: 1/500, speed: 70 };
-*/
+  const searchBtn = document.getElementById('searchBtn');
+  if (searchBtn) {
+    searchBtn.onclick = async () => {
+      const startStationName = (document.getElementById('startStation') as HTMLInputElement).value;
+      const startTimeStr = (document.getElementById('startTime') as HTMLInputElement).value;
+      const startTime = dateSetTime(new Date(), startTimeStr);
+
+      const startStation = stationNameMap.get(startStationName);
+      if (!startStation) return;
+      const earliest = await dijkstra(target, startStation, startTime);
+      const result = document.getElementById('result');
+      if (!result) return;
+
+      let s = "";
+      for (const dest of earliest.keys()) {
+        s += `To ${stationIdMap.get(dest)}: \n`
+        s += getPathString(earliest, dest, startTime);
+      }
+      result.innerText = s;
+
+      drawCartogram(configLausanne, geostations, startStation, startTime, earliest);
+    }
+  }
+}
 
 (async () => { await ui(Dataset.Lausanne); })();

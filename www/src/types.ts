@@ -1,6 +1,6 @@
 export type Station = string;
 // E, N are meters in relation to the observatory in Bern, which is at 2600000/1200000
-export type GeoStation =  { name: Station, E: number, N: number }
+export type GeoStation =  { name: Station, humanName: string, E: number, N: number }
 
 export interface TargetInfo {
   arrivalTime: Date;
@@ -25,4 +25,24 @@ export type Config = {
     br: BasemapReference,
     scale: number, /* pixels per meter */
     speed: number, /* kilometers per hour */
+}
+
+// from https://www.swisstopo.admin.ch/en/transformation-calculation-services
+export function WGS84_to_LV95(lat: number, lon: number): [number, number] {
+    let auxlat = (lat * 3600 - 169_028.66) / 10_000;
+    let auxlon = (lon * 3600 -  26_782.5 ) / 10_000;
+    let pow = (latexp: number, lonexp: number) => auxlat ** latexp * auxlon ** lonexp;
+    return [
+        2_600_072.37
+            + 211_455.93 * pow(0, 1)
+            -  10_938.51 * pow(1, 1)
+            -       0.36 * pow(2, 1)
+            -      44.54 * pow(0, 3),
+        1_200_147.07
+            + 308_807.95 * pow(1, 0)
+            +   3_745.25 * pow(0, 2)
+            +      76.63 * pow(2, 0)
+            -     194.56 * pow(1, 2)
+            +     119.79 * pow(3, 0),
+    ];
 }

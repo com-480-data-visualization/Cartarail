@@ -5,7 +5,8 @@ import {
   ICompare
 } from '@datastructures-js/priority-queue';
 
-import type { Station, Target, TargetInfo } from "./types";
+import type { Station, GeoStation, Target, TargetInfo } from "./types";
+import { WGS84_to_LV95 } from "./types";
 
 const base = import.meta.env.BASE_URL;
 
@@ -72,13 +73,15 @@ Object.values(Dataset).forEach(target => {
   loaded.set(target, new Map<Table, boolean>());
 });
 const allLoaded = new Map<Dataset, boolean>();
-const stationIdMap = new Map<Station, string>(), stationNameMap = new Map<string, Station>();
+export const stationIdMap = new Map<Station, string>();
+export const stationNameMap = new Map<string, Station>();
+export var geostations: GeoStation[] = [];
 
 function getDbTableName(target: Dataset, table: Table): string {
   return `${target}_${table}`;
 }
 
-function loadStationCSVToMap(target: Dataset) {
+export function loadStationCSVToMap(target: Dataset) {
   if (loaded.get(target)?.get(Table.Station)) return;
 
   return fetch(`${base}${target}/${Table.Station}.csv`)
@@ -97,6 +100,8 @@ function loadStationCSVToMap(target: Dataset) {
       for (const row of res.data) {
         stationIdMap.set(row.stop_id, row.stop_name);
         stationNameMap.set(row.stop_name, row.stop_id);
+        let [stop_E, stop_N] = WGS84_to_LV95(row.stop_lat, row.stop_lon);
+        geostations.push({name: row.stop_id, humanName: row.stop_name, E: stop_E, N: stop_N});
       }
       loaded.get(target)?.set(Table.Station, true);
       console.log(`${target} ${Table.Station}.csv is loaded into memory.`);
@@ -191,7 +196,7 @@ function dateToString(date: Date): string {
   return `${hh}:${mm}:${ss}`;
 }
 
-function dateSetTime(base: Date, timeStr: string, isNextDay: boolean = false): Date {
+export function dateSetTime(base: Date, timeStr: string, isNextDay: boolean = false): Date {
   const [hh, mm, ss] = timeStr.split(":").map(Number);
   const res = new Date(base);
   if (isNextDay) {
@@ -225,7 +230,7 @@ function getClosest(time: Date, departureArrivalTime: [string, string][]): [Date
   return null;
 }
 
-async function dijkstra(target: Dataset, startStation: Station, startTime: Date) {
+export async function dijkstra(target: Dataset, startStation: Station, startTime: Date) {
   if (!allLoaded.has(target) || allLoaded.get(target) === false) {
     await loadCSV(target);
   }
@@ -347,43 +352,6 @@ function pathToString(path: Array<Target>, startTime: Date): string {
   return s;
 }
 
-function getPathString(earliest: Map<Station, TargetInfo>, dest: Station, startTime: Date): string {
+export function getPathString(earliest: Map<Station, TargetInfo>, dest: Station, startTime: Date): string {
   return pathToString(getPath(earliest, dest), startTime);
-}
-
-// ========== UI ==========
-
-export async function ui(target: Dataset) {
-  await loadStationCSVToMap(target);
-
-  const stationList = document.getElementById('stationList');
-  if (stationList) {
-    for (const key of stationNameMap.keys()) {
-      const option = document.createElement('option');
-      option.value = key;
-      stationList.appendChild(option);
-    }
-  }
-
-  const searchBtn = document.getElementById('searchBtn');
-  if (searchBtn) {
-    searchBtn.onclick = async () => {
-      const startStationName = (document.getElementById('startStation') as HTMLInputElement).value;
-      const startTimeStr = (document.getElementById('startTime') as HTMLInputElement).value;
-      const startTime = dateSetTime(new Date(), startTimeStr);
-
-      const startStation = stationNameMap.get(startStationName);
-      if (!startStation) return;
-      const earliest = await dijkstra(target, startStation, startTime);
-      const result = document.getElementById('result');
-      if (!result) return;
-
-      let s = "";
-      for (const dest of earliest.keys()) {
-        s += `To ${stationIdMap.get(dest)}: \n`
-        s += getPathString(earliest, dest, startTime);
-      }
-      result.innerText = s;
-    }
-  }
 }

@@ -1,7 +1,7 @@
 import * as d3force from "d3-force";
 import * as d3selection from "d3-selection";
 import { Homography } from "homography";
-import type { Config, Station, GeoStation, TargetInfo } from "./types";
+import type { BasemapReference, Config, Station, GeoStation, TargetInfo } from "./types";
 
 export function drawCartogram(config: Config,
                               stations: GeoStation[],
@@ -25,10 +25,11 @@ export function drawCartogram(config: Config,
         .style("position", "absolute")
         .style("z-index", "-1");
 
-    d3selection.select('#spring-layout')
-        .style("position", "relative")
-        .append(() => canvas.node());
-    d3selection.select('#spring-layout').append(() => svg.node());
+    const layout = d3selection.select('#spring-layout');
+    layout.selectChildren().remove();
+    layout.style("position", "relative");
+    layout.append(() => canvas.node());
+    layout.append(() => svg.node());
 
     const homography = new Homography("piecewiseaffine");
     const basemapElement = canvas.node();
@@ -60,17 +61,13 @@ export function drawCartogram(config: Config,
         let y = N2Y(station.N);
         return {
             'name': station.name,
+            'humanName': station.humanName,
             'x': x, 'y': y,
             'xGeo': x, 'yGeo': y,
             'fx': (station.name == source)? x: undefined,
             'fy': (station.name == source)? y: undefined,
         }
     });
-
-    const pinnedCorners: [number, number][] =
-        [[0, 0], [width, 0], [0, height], [width, height]];
-    homography.setSourcePoints(
-        nodes.map((s) => <[number, number]>[s.xGeo, s.yGeo]).concat(pinnedCorners));
 
     let links = [];
     const speed = config.speed // km/hr
@@ -81,7 +78,7 @@ export function drawCartogram(config: Config,
         let travelTime = (info.arrivalTime.getTime() - departureTime.getTime()) / 1000 / 60;
         links.push({'source': source, 'target': target, 'distance': travelTime * speed});
         if (info.arrivingFrom) {
-            if (!(info.arrivingFrom in targets)) {
+            if (!targets.has(info.arrivingFrom)) {
                 throw new Error("arrivingFrom must be a key in targets! " +
                     "arrivingFrom: " + info.arrivingFrom);
             }
@@ -92,7 +89,7 @@ export function drawCartogram(config: Config,
         }
     }
 
-    const travelTimeToGeographyBias = 20;
+    const travelTimeToGeographyBias = 5;
     d3force.forceSimulation(nodes)
         .force(
             "link",
@@ -104,11 +101,11 @@ export function drawCartogram(config: Config,
         .force("yGeo", d3force.forceY().y((n: any) => n.yGeo).strength(1/travelTimeToGeographyBias))
         .velocityDecay(0.1)
         .stop()
-        .tick(2000);
+        .tick(10000);
 
     svg.append("g")
         .attr("stroke", "#999")
-        .attr("stroke-opacity", 0.6)
+        .attr("stroke-opacity", 0.2)
         .selectAll("line")
         .data(links)
         .join("line")
@@ -117,29 +114,47 @@ export function drawCartogram(config: Config,
         .attr("x2", (d: any) => d.target.x)
         .attr("y2", (d: any) => d.target.y);
 
-    svg.append("g")
-        .attr("fill", "black")
-        .selectAll("text")
-        .data(nodes)
-        .join("text")
-        .attr("x", (n) => n.x + 10)
-        .attr("y", (n) => n.y + 10)
-        .text((n) => n.name);
+    // svg.append("g")
+    //     .attr("fill", "black")
+    //     .selectAll("text")
+    //     .data(nodes)
+    //     .join("text")
+    //     .attr("x", (n) => n.x + 10)
+    //     .attr("y", (n) => n.y + 10)
+    //     .text((n) => n.humanName);
 
     svg.append("g")
         .attr("stroke", "#fff")
-        .attr("stroke-width", 1.5)
+        .attr("stroke-width", 1)
         .attr("fill", "000")
         .selectAll("circle")
         .data(nodes)
         .join("circle")
-        .attr("r", 4)
-        .call((n) => n.append("title").text((d) => d.name))
+        .attr("r", 2)
+        .call((n) => n.append("title").text((d) => d.humanName))
         .attr("cx", d => d.x)
         .attr("cy", d => d.y);
 
+    const pinnedCorners: [number, number][] =
+        [[0, 0], [width, 0], [0, height], [width, height]];
     function warpBasemap() {
-        homography.setDestinyPoints(nodes.map((s) => <[number, number]>[s.x, s.y]).concat(pinnedCorners));
+        let srcs: [number, number][] = [];
+        let dsts: [number, number][] = [];
+        for (const s of nodes) {
+            if ((0 > s.xGeo) || (s.xGeo >= width) || (0 > s.yGeo) || (s.yGeo >= height)) {
+                continue;
+            }
+            if ((-20 > s.x) || (s.x >= width + 20) || (-20 > s.y) || (s.y >= height + 20)) {
+                continue;
+            }
+            if (((s.x - s.xGeo)**2 + (s.y - s.yGeo)**2)**0.5 > 100) {
+                continue;
+            }
+            srcs.push([s.xGeo, s.yGeo]);
+            dsts.push([s.x, s.y]);
+        }
+        homography.setSourcePoints(srcs.concat(pinnedCorners));
+        homography.setDestinyPoints(dsts.concat(pinnedCorners));
         basemapContext.clearRect(0, 0, width, height);
         basemapContext.putImageData(homography.warp(), 0, 0);
     }
@@ -151,14 +166,36 @@ export function drawCartogram(config: Config,
     }
 }
 
-/*
-const stations1: Station[] = [
-    {'name': 'St. Gallen', 'E': 2745713.03, 'N': 1254279.06},
-    {'name': 'Zürich HB', 'E': 2683190.01, 'N': 1248066.09},
-    {'name': 'Bern', 'E': 2600038.01, 'N': 1199749.94},
-    {'name': 'Fribourg/Freiburg', 'E': 2578047.01, 'N': 1183594.95},
-    {'name': 'Lausanne', 'E': 2537875.02, 'N': 1152042.04},
-    {'name': 'Morges', 'E': 2527498.01, 'N': 1151525.94},
-    {'name': 'Genève', 'E': 2499969.00, 'N': 1118468.11},
-];
-*/
+export const basemapLausanne: BasemapReference = {
+    ref1X: 556,
+    ref1Y: 768,
+    ref1E: 2_533_128,
+    ref1N: 1_153_421,
+    ref2X: 2337,
+    ref2Y: 137,
+    ref2E: 2_542_166,
+    ref2N: 1_156_617,
+
+    path: "./public/lausanne/basemap.png",
+    originalWidth: 2687,
+    originalHeight: 1565,
+}
+
+export const configLausanne: Config = { br: basemapLausanne, scale: 1/20, speed: 10 };
+
+export const basemapNational: BasemapReference = {
+    ref1X: 10,
+    ref1E: 2485375.28,
+    ref1Y: 1083,
+    ref1N: 1110091.73,
+    ref2X: 1595,
+    ref2E: 2759808.80,
+    ref2Y: 199,
+    ref2N: 1263143.64,
+
+    path: "/basemap.png",
+    originalWidth: 2032,
+    originalHeight: 1293,
+};
+
+export const configNational: Config = { br: basemapNational, scale: 1/500, speed: 70 };

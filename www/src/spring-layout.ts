@@ -1,26 +1,13 @@
 import * as d3force from "d3-force";
 import * as d3selection from "d3-selection";
 import { Homography } from "homography";
+import type { Config, Station, GeoStation, TargetInfo } from "./types";
 
-export type BasemapReference = {
-    ref1X: number, ref1E: number, ref1Y: number, ref1N: number,  /* real and image coordinates of reference point 1 */
-    ref2X: number, ref2E: number, ref2Y: number, ref2N: number,  /* ditto of ref. pt. 2 */
-    path: string, originalWidth: number, originalHeight: number, /* image info */
-}
-
-export type Config = {
-    br: BasemapReference,
-    scale: number, /* pixels per meter */
-    speed: number, /* kilometers per hour */
-}
-
-// E, N are meters in relation to the observatory in Bern, which is at 2600000/1200000
-export type Station = { name: string, E: number, N: number }
-
-// indexed by station names. prev, if present, must also be a station name
-export interface Targets { [index: string]: { time: number /* minutes */, prev?: string }; }
-
-export function drawCartogram(config: Config, stations: Station[], source: string, targets: Targets): void {
+export function drawCartogram(config: Config,
+                              stations: GeoStation[],
+                              source: Station,
+                              departureTime: Date,
+                              targets: Map<Station, TargetInfo>): void {
     const br = config.br;
     const originalScale = (br.ref2X - br.ref1X) / (br.ref2E - br.ref1E);
     const width = br.originalWidth * config.scale / originalScale;
@@ -80,19 +67,28 @@ export function drawCartogram(config: Config, stations: Station[], source: strin
         }
     });
 
-    const pinnedCorners: [number, number][] = [[0, 0], [width, 0], [0, height], [width, height]];
-    homography.setSourcePoints(nodes.map((s) => <[number, number]>[s.xGeo, s.yGeo]).concat(pinnedCorners));
+    const pinnedCorners: [number, number][] =
+        [[0, 0], [width, 0], [0, height], [width, height]];
+    homography.setSourcePoints(
+        nodes.map((s) => <[number, number]>[s.xGeo, s.yGeo]).concat(pinnedCorners));
 
     let links = [];
     const speed = config.speed // km/hr
         * 1000                 //  m/hr
         / 60                   //  m/min
         * config.scale;        // px/min
-    for (const [target, info] of Object.entries(targets)) {
-        links.push({'source': source, 'target': target, 'time': info.time * speed});
-        if (info.prev) {
-            links.push({'source': info.prev, 'target': target,
-                        'time': (info.time - targets[info.prev].time) * speed});
+    for (const [target, info] of targets) {
+        let travelTime = (info.arrivalTime.getTime() - departureTime.getTime()) / 1000 / 60;
+        links.push({'source': source, 'target': target, 'distance': travelTime * speed});
+        if (info.arrivingFrom) {
+            if (!(info.arrivingFrom in targets)) {
+                throw new Error("arrivingFrom must be a key in targets! " +
+                    "arrivingFrom: " + info.arrivingFrom);
+            }
+            let prevTravelTime = (info.arrivalTime.getTime() -
+                targets.get(info.arrivingFrom)!.arrivalTime.getTime()) / 1000 / 60;
+            links.push({'source': info.arrivingFrom, 'target': target,
+                        'distance': prevTravelTime * speed});
         }
     }
 
@@ -102,7 +98,7 @@ export function drawCartogram(config: Config, stations: Station[], source: strin
             "link",
             d3force.forceLink(links)
                 .id((n: any) => n.name)
-                .distance((l) => l.time)
+                .distance((l) => l.distance)
                 .strength(1))
         .force("xGeo", d3force.forceX().x((n: any) => n.xGeo).strength(1/travelTimeToGeographyBias))
         .force("yGeo", d3force.forceY().y((n: any) => n.yGeo).strength(1/travelTimeToGeographyBias))
@@ -155,6 +151,7 @@ export function drawCartogram(config: Config, stations: Station[], source: strin
     }
 }
 
+/*
 const basemap1: BasemapReference = {
     ref1X: 10,
     ref1E: 2485375.28,
@@ -181,18 +178,4 @@ const stations1: Station[] = [
     {'name': 'Morges', 'E': 2527498.01, 'N': 1151525.94},
     {'name': 'Genève', 'E': 2499969.00, 'N': 1118468.11},
 ];
-
-const source1 = 'Lausanne';
-
-const targets1: Targets = {
-    'St. Gallen': {'time': 208, 'prev': 'Zürich HB'},
-    'Zürich HB': {'time': 142, 'prev': 'Bern'},
-    'Bern': {'time': 90, 'prev': 'Fribourg/Freiburg'},
-    'Fribourg/Freiburg': {'time': 61},
-    'Morges': {'time': 8},
-    'Genève': {'time': 39, 'prev': 'Morges'},
-};
-
-export function trial1() {
-    drawCartogram(config1, stations1, source1, targets1);
-}
+*/

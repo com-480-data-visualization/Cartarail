@@ -5,14 +5,13 @@ import {
   ICompare
 } from '@datastructures-js/priority-queue';
 
-const base = import.meta.env.BASE_URL;
+import type { Station, Target, TargetInfo } from "./types";
 
-// Station, identified by its id in the dataset.
-type Station = string;
+const base = import.meta.env.BASE_URL;
 
 // =========== load data ==========
 
-enum Target {
+enum Dataset {
   Lausanne = "lausanne",
   Train = "train"
 }
@@ -68,18 +67,18 @@ function parseDepartureArrivalTime(s: string): [string, string][] {
   }
 }
 
-const loaded = new Map<Target, Map<Table, boolean>>();
-Object.values(Target).forEach(target => {
+const loaded = new Map<Dataset, Map<Table, boolean>>();
+Object.values(Dataset).forEach(target => {
   loaded.set(target, new Map<Table, boolean>());
 });
-const allLoaded = new Map<Target, boolean>();
+const allLoaded = new Map<Dataset, boolean>();
 const stationIdMap = new Map<Station, string>(), stationNameMap = new Map<string, Station>();
 
-function getDbTableName(target: Target, table: Table): string {
+function getDbTableName(target: Dataset, table: Table): string {
   return `${target}_${table}`;
 }
 
-function loadStationCSVToMap(target: Target) {
+function loadStationCSVToMap(target: Dataset) {
   if (loaded.get(target)?.get(Table.Station)) return;
 
   return fetch(`${base}${target}/${Table.Station}.csv`)
@@ -108,7 +107,7 @@ function loadStationCSVToMap(target: Target) {
     });
 }
 
-async function loadTransportCSVToDB(target: Target){
+async function loadTransportCSVToDB(target: Dataset){
   if (loaded.get(target)?.get(Table.Transport)) return;
 
   const response = await fetch(`${base}${target}/${Table.Transport}.csv`);
@@ -142,7 +141,7 @@ async function loadTransportCSVToDB(target: Target){
   console.log(`${target} ${Table.Transport}.csv is loaded into memory.`);
 }
 
-async function loadWalkCSVToDB(target: Target) {
+async function loadWalkCSVToDB(target: Dataset) {
   if (loaded.get(target)?.get(Table.Walk)) return;
 
   const response = await fetch(`${base}${target}/${Table.Walk}.csv`);
@@ -167,7 +166,7 @@ async function loadWalkCSVToDB(target: Target) {
   console.log(`${target} ${Table.Walk}.csv is loaded into memory.`);
 }
 
-async function loadCSV(target: Target) {
+async function loadCSV(target: Dataset) {
   await Promise.all([
     loadStationCSVToMap(target),
     loadTransportCSVToDB(target),
@@ -181,17 +180,7 @@ async function loadCSV(target: Target) {
 
 // =========== shortest path ==========
 
-interface Arrival {
-  station: Station;
-  arrivalTime: Date;
-  totalWalkTime: number;
-  from: Station;
-  departureTime: Date;
-  routeDesc: string;
-  routeShortName: string;
-}
-
-const compareArrival: ICompare<Arrival> = (a: Arrival, b: Arrival) => {
+const compareTarget: ICompare<Target> = (a: Target, b: Target) => {
   return a.arrivalTime < b.arrivalTime ? -1 : 1;
 }
 
@@ -236,18 +225,18 @@ function getClosest(time: Date, departureArrivalTime: [string, string][]): [Date
   return null;
 }
 
-async function dijkstra(target: Target, startStation: Station, startTime: Date) {
+async function dijkstra(target: Dataset, startStation: Station, startTime: Date) {
   if (!allLoaded.has(target) || allLoaded.get(target) === false) {
     await loadCSV(target);
   }
 
-  let earliest = new Map<Station, Arrival>();
-  let queue = new PriorityQueue<Arrival>(compareArrival);
+  let earliest = new Map<Station, TargetInfo>();
+  let queue = new PriorityQueue<Target>(compareTarget);
   queue.push({
     station: startStation,
     arrivalTime: startTime,
     totalWalkTime: 0,
-    from: "",
+    arrivingFrom: "",
     departureTime: startTime,
     routeDesc: "",
     routeShortName: "",
@@ -272,7 +261,7 @@ async function dijkstra(target: Target, startStation: Station, startTime: Date) 
           station: record.next_station,
           arrivalTime: departureArrivalTime[1],
           totalWalkTime: cur.totalWalkTime,
-          from: record.start_station,
+          arrivingFrom: record.start_station,
           departureTime: departureArrivalTime[0],
           routeDesc: record.route_desc,
           routeShortName: record.route_short_name,
@@ -288,7 +277,7 @@ async function dijkstra(target: Target, startStation: Station, startTime: Date) 
         station: record.next_station,
         arrivalTime: new Date(cur.arrivalTime.getTime() + record.walk_time * 60 * 1000),
         totalWalkTime: totalWalkTime,
-        from: record.start_station,
+        arrivingFrom: record.start_station,
         departureTime: cur.arrivalTime,
         routeDesc: "W",
         routeShortName: "Walk",
@@ -299,11 +288,11 @@ async function dijkstra(target: Target, startStation: Station, startTime: Date) 
   return earliest;
 }
 
-function getPath(earliest: Map<Station, Arrival>, dest: Station): Array<Arrival> {
-  const path: Array<Arrival> = [];
-  let curArrival = earliest.get(dest);
-  let nextArrival: Arrival | null = null;
-  while (curArrival && curArrival.from !== "") {
+function getPath(earliest: Map<Station, TargetInfo>, dest: Station): Array<Target> {
+  const path: Array<Target> = [];
+  let curArrival: Target = { ...earliest.get(dest)!, station: dest };
+  let nextArrival: Target | null = null;
+  while (curArrival && curArrival.arrivingFrom !== "") {
     if (nextArrival && (curArrival.routeDesc !== nextArrival.routeDesc || curArrival.routeShortName !== nextArrival.routeShortName)) {
       path.push(nextArrival);
       nextArrival = curArrival;
@@ -312,14 +301,15 @@ function getPath(earliest: Map<Station, Arrival>, dest: Station): Array<Arrival>
         station: nextArrival.station,
         arrivalTime: nextArrival.arrivalTime,
         totalWalkTime: nextArrival.totalWalkTime,
-        from: curArrival.from,
+        arrivingFrom: curArrival.arrivingFrom,
         departureTime: curArrival.departureTime,
         routeDesc: nextArrival.routeDesc,
         routeShortName: nextArrival.routeShortName,
       };
     else
       nextArrival = curArrival;
-    curArrival = earliest.get(curArrival.from);
+    curArrival = { ...earliest.get(curArrival.arrivingFrom)!,
+                   station: curArrival.arrivingFrom };
   }
   if (nextArrival) path.push(nextArrival);
   return path.reverse();
@@ -341,14 +331,14 @@ function formatTimeDiff(date1: Date, date2: Date): string {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
-function pathToString(path: Array<Arrival>, startTime: Date): string {
-  let s = "", from = null, to = null, fromTime = "", toTime = "";
+function pathToString(path: Array<Target>, startTime: Date): string {
+  let s = "", arrivingFrom = null, to = null, fromTime = "", toTime = "";
   for (const arrival of path) {
-    from = stationIdMap.get(arrival.from);
+    arrivingFrom = stationIdMap.get(arrival.arrivingFrom);
     to = stationIdMap.get(arrival.station);
     fromTime = tripDateToString(startTime, arrival.departureTime);
     toTime = tripDateToString(startTime, arrival.arrivalTime);
-    s += `${from} @ ${fromTime}  -----(${arrival.routeDesc}) ${arrival.routeShortName}---->  ${to} @ ${toTime} \n`;
+    s += `${arrivingFrom} @ ${fromTime}  -----(${arrival.routeDesc}) ${arrival.routeShortName}---->  ${to} @ ${toTime} \n`;
   }
   if (path.length > 0) {
     s += `total walk time: within ${Math.ceil(path[path.length - 1].totalWalkTime)} minutes\n`;
@@ -357,13 +347,13 @@ function pathToString(path: Array<Arrival>, startTime: Date): string {
   return s;
 }
 
-function getPathString(earliest: Map<Station, Arrival>, dest: Station, startTime: Date): string {
+function getPathString(earliest: Map<Station, TargetInfo>, dest: Station, startTime: Date): string {
   return pathToString(getPath(earliest, dest), startTime);
 }
 
 // ========== UI ==========
 
-async function ui(target: Target) {
+async function ui(target: Dataset) {
   await loadStationCSVToMap(target);
 
   const stationList = document.getElementById('stationList');
@@ -398,4 +388,4 @@ async function ui(target: Target) {
   }
 }
 
-(async () => { await ui(Target.Lausanne); })();
+(async () => { await ui(Dataset.Lausanne); })();

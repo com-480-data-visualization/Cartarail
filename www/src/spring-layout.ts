@@ -156,9 +156,6 @@ export function drawCartogram(config: Config,
             if ((-20 > s.x) || (s.x >= width + 20) || (-20 > s.y) || (s.y >= height + 20)) {
                 continue;
             }
-            if (((s.x - s.xGeo)**2 + (s.y - s.yGeo)**2)**0.5 > 100) {
-                continue;
-            }
             srcs.push([s.xGeo, s.yGeo]);
             reldsts.push([s.xGeo, s.x - s.xGeo, s.yGeo, s.y - s.yGeo]);
         }
@@ -181,6 +178,9 @@ export function drawCartogram(config: Config,
                 prevTs = ts;
                 basemapContext.clearRect(0, 0, width, height);
                 basemapContext.putImageData(homographies[idx], 0, 0);
+                graphNodes
+                    .attr("cx", d => d.xGeo + (d.x - d.xGeo)*idx/(numHomographies-1))
+                    .attr("cy", d => d.yGeo + (d.y - d.yGeo)*idx/(numHomographies-1));
                 if (warped) {
                     idx -= 1;
                     if (idx >= 0) {

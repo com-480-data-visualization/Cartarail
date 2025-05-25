@@ -12,13 +12,12 @@
 }
 
 body {
-    max-width: 700px;
+    width: 700px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     padding: 0;
-    margin: 0 auto;
-    margin-left: 20%;
+    margin: 0 2em;
 }
 
 header {
@@ -71,8 +70,8 @@ input {
 #finder-box {
     float: right;
     clear: left;
-    margin-right: -19em;
-    width: 18em;
+    margin-right: -29em;
+    width: 28em;
 }
 
 .hidden {
@@ -86,9 +85,50 @@ img.placeholder {
     width: 100%;
 }
 
-.found-node {
-    fill: #f00;
+.found-node, circle:hover {
+    fill: var(--epfl-rouge);
     r: 6px;
+}
+
+.selected-node, .selected-node:hover {
+    fill: var(--epfl-léman);
+    r: 6px;
+}
+
+#finder-box table {
+    font-variant-numeric: tabular-nums;
+    border-collapse: collapse;
+    margin-bottom: 2em;
+}
+
+#finder-box thead th {
+    text-align: left;
+    font-weight: bold;
+}
+
+#finder-box thead {
+    margin-bottom: 0.5em;
+}
+
+#finder-box th, td {
+    padding: 0.1em 0.5em;
+}
+
+#finder-box th {
+    padding-bottom: 0.5em;
+}
+
+#finder-box td {
+    vertical-align: top;
+}
+
+#finder-box td:nth-child(3) {
+    text-align: center;
+}
+
+#finder-box tr:last-child td:nth-child(2) {
+    color: var(--epfl-canard);
+    font-weight: bold;
 }
 
 footer {

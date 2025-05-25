@@ -1,18 +1,17 @@
 import { Dataset, geostations, loadStationCSVToMap, dateSetTime,
-         stationIdMap, stationNameMap, dijkstra, getPathString } from "./path-finder";
+         stationNameMap, dijkstra, pathInfoHTML } from "./path-finder";
 import { drawCartogram, configLausanne, configNational } from "./spring-layout";
+import { mustGetElementById, Station, infoBoxId } from "./common";
 
 async function populateStationList(target: Dataset) {
-  await loadStationCSVToMap(target);
-  const stationList = document.getElementById('stationList');
-  if (stationList) {
+    await loadStationCSVToMap(target);
+    const stationList = mustGetElementById('stationList');
     stationList.replaceChildren();
-      for (const key of stationNameMap.get(target)!.keys()) {
-      const option = document.createElement('option');
-      option.value = key;
-      stationList.appendChild(option);
+    for (const key of stationNameMap.get(target)!.keys()) {
+        const option = document.createElement('option');
+        option.value = key;
+        stationList.appendChild(option);
     }
-  }
 }
 
 async function computeCartogram(target: Dataset) {
@@ -24,23 +23,20 @@ async function computeCartogram(target: Dataset) {
     const startStation = stationNameMap.get(target)!.get(startStationName);
     if (!startStation) return;
     const earliest = await dijkstra(target, startStation, startTime);
-    const result = document.getElementById('result');
-    if (!result) return;
 
-    let s = "";
-    for (const dest of earliest.keys()) {
-        s += `To ${stationIdMap.get(target)!.get(dest)}: \n`
-        s += getPathString(target, earliest, dest, startTime);
+    const infoBox = mustGetElementById('info-box');
+    function showPathForStation(station: Station) {
+        let info = pathInfoHTML(target, earliest, station, startTime);
+        info.setAttribute("id", infoBoxId(station));
+        infoBox.append(info);
     }
-    result.innerText = s;
 
     drawCartogram(configLausanne, geostations.get(target)!,
-                  startStation, startTime, earliest);
+                  startStation, startTime, earliest, showPathForStation);
 }
 
 /*
   TODO
-    hover for path info
     slider for relative strength
 
   DONE (pending data)
@@ -49,22 +45,15 @@ async function computeCartogram(target: Dataset) {
   DONE
     animate between warped and normal
     search for destination
+    hover for path info
  */
 
-const scaleList = document.getElementById('scaleList');
+const scaleList = mustGetElementById('scaleList');
 const basemapOriginalImage =
-    document.getElementById('spring-layout')!.getElementsByTagName('img')[0];
-if (!scaleList) {
-    throw new Error("could not find UI element #scaleList!");
-}
-const finderBox = document.getElementById('finder-box');
-if (!finderBox) {
-    throw new Error("could not find UI element #finder-box!");
-}
-const initialConfigForm = document.getElementById('initialConfig');
-if (!initialConfigForm) {
-    throw new Error("could not find UI element #initialConfig!");
-}
+    mustGetElementById('spring-layout').getElementsByTagName('img')[0];
+const finderBox = mustGetElementById('finder-box');
+const initialConfigForm = mustGetElementById('initialConfig') as HTMLFormElement;
+
 async function setDataset(dataset: Dataset) {
     await populateStationList(dataset);
     initialConfigForm!.onsubmit = async (event) => {

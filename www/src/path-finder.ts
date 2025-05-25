@@ -5,8 +5,8 @@ import {
   ICompare
 } from '@datastructures-js/priority-queue';
 
-import type { Station, GeoStation, Target, TargetInfo } from "./types";
-import { WGS84_to_LV95 } from "./types";
+import type { Station, GeoStation, Target, TargetInfo } from "./common";
+import { WGS84_to_LV95 } from "./common";
 
 const base = import.meta.env.BASE_URL;
 
@@ -307,18 +307,12 @@ function getPath(earliest: Map<Station, TargetInfo>, dest: Station): Array<Targe
     if (nextArrival && (curArrival.routeDesc !== nextArrival.routeDesc || curArrival.routeShortName !== nextArrival.routeShortName)) {
       path.push(nextArrival);
       nextArrival = curArrival;
-    } else if (nextArrival)
-      nextArrival = {
-        station: nextArrival.station,
-        arrivalTime: nextArrival.arrivalTime,
-        totalWalkTime: nextArrival.totalWalkTime,
-        arrivingFrom: curArrival.arrivingFrom,
-        departureTime: curArrival.departureTime,
-        routeDesc: nextArrival.routeDesc,
-        routeShortName: nextArrival.routeShortName,
-      };
-    else
+    } else if (nextArrival) {
+      nextArrival.arrivingFrom = curArrival.arrivingFrom;
+      nextArrival.departureTime = curArrival.departureTime;
+    } else {
       nextArrival = curArrival;
+    }
     curArrival = { ...earliest.get(curArrival.arrivingFrom)!,
                    station: curArrival.arrivingFrom };
   }
@@ -363,4 +357,42 @@ export function getPathString(target: Dataset,
                               dest: Station,
                               startTime: Date): string {
     return pathToString(target, getPath(earliest, dest), startTime);
+}
+
+export function pathInfoHTML(dataset: Dataset, earliest: Map<Station, TargetInfo>,
+                             destination: Station, startTime: Date): Element {
+    const sim = stationIdMap.get(dataset)!;
+    let path = getPath(earliest, destination);
+    let info =  document.createElement("table");
+    let infoHead = document.createElement("thead");
+    infoHead.innerHTML = `
+<tr>
+  <th scope="col">depart</th>
+  <th scope="col">to</th>
+  <th scope="col">via</th>
+  <th scope="col">arrive</th>
+</tr>`;
+    info.append(infoHead);
+    for (const step of path) {
+        let infoRow = document.createElement("tr");
+
+        let depart = document.createElement("td");
+        depart.append(tripDateToString(startTime, step.departureTime));
+        infoRow.append(depart);
+
+        let to_ = document.createElement("td");
+        to_.append(sim.get(step.station)!);
+        infoRow.append(to_);
+
+        let via = document.createElement("td");
+        via.append(step.routeDesc);
+        infoRow.append(via);
+
+        let arrive = document.createElement("td");
+        arrive.append(tripDateToString(startTime, step.arrivalTime));
+        infoRow.append(arrive);
+
+        info.append(infoRow);
+    }
+    return info;
 }

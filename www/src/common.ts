@@ -45,3 +45,15 @@ export function WGS84_to_LV95(lat: number, lon: number): [number, number] {
             +     119.79 * pow(3, 0),
     ];
 }
+
+export function mustGetElementById(id: string): Element {
+    let elem = document.getElementById(id);
+    if (!elem) {
+        throw new Error("could not find element #" + id + "!");
+    }
+    return elem;
+}
+
+export function infoBoxId(station: Station): string {
+    return "info" + station;
+}

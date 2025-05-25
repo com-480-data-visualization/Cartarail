@@ -1,13 +1,15 @@
 import * as d3force from "d3-force";
 import * as d3selection from "d3-selection";
 import { Homography } from "homography";
-import type { BasemapReference, Config, Station, GeoStation, TargetInfo } from "./types";
+import type { BasemapReference, Config, Station, GeoStation, TargetInfo } from "./common";
+import { mustGetElementById, infoBoxId } from "./common";
 
 export function drawCartogram(config: Config,
                               stations: GeoStation[],
                               source: Station,
                               departureTime: Date,
-                              targets: Map<Station, TargetInfo>): void {
+                              targets: Map<Station, TargetInfo>,
+                              infoCallback: (s: Station) => void): void {
     const br = config.br;
     const originalScale = (br.ref2X - br.ref1X) / (br.ref2E - br.ref1E);
     const width = 700;
@@ -118,8 +120,20 @@ export function drawCartogram(config: Config,
         .join("circle")
         .attr("r", 2)
         .call((n) => n.append("title").text((d) => d.humanName))
-        .attr("cx", d => d.x)
-        .attr("cy", d => d.y);
+        .on("click", (event) => {
+            event.target.classList.toggle('selected-node');
+            event.target.dispatchEvent(new Event('mouseleave'));
+        })
+        .on("mouseenter", (event, d) => {
+            if (!event.target.classList.contains('selected-node')) {
+                infoCallback(d.name);
+            }
+        })
+        .on("mouseleave", (event, d) => {
+            if (!event.target.classList.contains('selected-node')) {
+                document.getElementById(infoBoxId(d.name))?.remove();
+            }
+        });
 
     document.getElementById('station-finder')!.addEventListener('input', (event) => {
         if (!(event && event.target instanceof HTMLInputElement)) return;
@@ -211,7 +225,7 @@ export function drawCartogram(config: Config,
         homographies.push(imgd);
         computeBasemapWarps();
         toggleBasemapWarp();
-        document.getElementById('toggleWarp')!.addEventListener("click", toggleBasemapWarp);
+        mustGetElementById('toggleWarp').addEventListener("click", toggleBasemapWarp);
         document.addEventListener('keydown', (event) => {
             if (!(event && event instanceof KeyboardEvent)) return;
             if (event.key == "w" && (event.altKey || event.metaKey) && !event.repeat) {

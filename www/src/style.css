@@ -12,7 +12,7 @@
 }
 
 body {
-    max-width: 40em;
+    max-width: 700px;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -73,7 +73,10 @@ input {
     clear: left;
     margin-right: -19em;
     width: 18em;
-    visibility: hidden;
+}
+
+.hidden {
+    display: none;
 }
 
 button {
@@ -81,6 +84,11 @@ button {
 
 img.placeholder {
     width: 100%;
+}
+
+.found-node {
+    fill: #f00;
+    r: 6px;
 }
 
 footer {

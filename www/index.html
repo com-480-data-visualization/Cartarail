@@ -19,23 +19,28 @@
     <main>
       <div class="input-bar">
         <label for="scaleList">scale:</label>
-        <select id="scaleList">
-          <option value="lausanne">Lausanne metropolitan area</option>
+        <select id="scaleList" autocomplete="off">
+          <option value="lausanne" selected>Lausanne metropolitan area</option>
           <option value="train">Swiss national rail network</option>
         </select>
       </div>
-      <div class="input-bar">
+      <form autocomplete="off" name="initial-config" id="initialConfig" class="input-bar">
+        <label for="startStation" class="hidden">start station</label>
         <input list="stationList" type="text" id="startStation" placeholder="from…">
         <datalist id="stationList"></datalist>
+        <label for="startTime" class="hidden">start time</label>
         <input id="startTime" placeholder="start time (HH:mm:ss)">
-        <button id="searchBtn">cartogram!</button>
-      </div>
+        <button name="cartogram">cartogram!</button>
+      </form>
 
       <div id="results">
-        <div id="finder-box">
+        <div id="finder-box" class="hidden">
           <div class="input-bar">
             <label for="station-finder">find:</label>
-            <input type="text" id="station-finder" placeholder="Lausanne-Flon">
+            <input type="text" list="stationList" id="station-finder" placeholder="Lausanne-Flon">
+          </div>
+          <div class="input-bar">
+            <button type="button" id="toggleWarp">toggle <u>w</u>arp</button>
           </div>
           <div id="info-box">
             <p>info here</p>

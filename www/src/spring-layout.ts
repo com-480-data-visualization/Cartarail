@@ -10,7 +10,8 @@ export function drawCartogram(config: Config,
                               targets: Map<Station, TargetInfo>): void {
     const br = config.br;
     const originalScale = (br.ref2X - br.ref1X) / (br.ref2E - br.ref1E);
-    const width = br.originalWidth * config.scale / originalScale;
+    const width = 700;
+    const scale = width / br.originalWidth * originalScale;
     const height = br.originalHeight * width / br.originalWidth;
 
     const svg = d3selection.create("svg")
@@ -30,21 +31,6 @@ export function drawCartogram(config: Config,
     layout.style("position", "relative");
     layout.append(() => canvas.node());
     layout.append(() => svg.node());
-
-    const homography = new Homography("piecewiseaffine");
-    const basemapElement = canvas.node();
-    if (!(basemapElement && (basemapElement instanceof HTMLCanvasElement))) {
-        throw new Error("Could not find canvas element with ID 'basemap'!");
-    }
-    const basemapContext = basemapElement.getContext("2d")!;
-    const basemapImage = new Image();
-    basemapImage.crossOrigin = "anonymous";
-    basemapImage.src = br.path;
-    basemapImage.addEventListener("load", () => {
-        basemapContext.drawImage(basemapImage, 0, 0, width, height);
-        basemapImage.style.display = "none";
-        homography.setImage(basemapContext.getImageData(0, 0, width, height));
-    });
 
     function E2X(Ecoord: number): number {
         let Erel = (Ecoord - br.ref1E) / (br.ref2E - br.ref1E);
@@ -73,7 +59,7 @@ export function drawCartogram(config: Config,
     const speed = config.speed // km/hr
         * 1000                 //  m/hr
         / 60                   //  m/min
-        * config.scale;        // px/min
+        * scale;               // px/min
     for (const [target, info] of targets) {
         let travelTime = (info.arrivalTime.getTime() - departureTime.getTime()) / 1000 / 60;
         links.push({'source': source, 'target': target, 'distance': travelTime * speed});
@@ -103,16 +89,16 @@ export function drawCartogram(config: Config,
         .stop()
         .tick(10000);
 
-    svg.append("g")
-        .attr("stroke", "#999")
-        .attr("stroke-opacity", 0.2)
-        .selectAll("line")
-        .data(links)
-        .join("line")
-        .attr("x1", (d: any) => d.source.x)
-        .attr("y1", (d: any) => d.source.y)
-        .attr("x2", (d: any) => d.target.x)
-        .attr("y2", (d: any) => d.target.y);
+    // svg.append("g")
+    //     .attr("stroke", "#999")
+    //     .attr("stroke-opacity", 0.2)
+    //     .selectAll("line")
+    //     .data(links)
+    //     .join("line")
+    //     .attr("x1", (d: any) => d.source.x)
+    //     .attr("y1", (d: any) => d.source.y)
+    //     .attr("x2", (d: any) => d.target.x)
+    //     .attr("y2", (d: any) => d.target.y);
 
     // svg.append("g")
     //     .attr("fill", "black")
@@ -123,7 +109,7 @@ export function drawCartogram(config: Config,
     //     .attr("y", (n) => n.y + 10)
     //     .text((n) => n.humanName);
 
-    svg.append("g")
+    const graphNodes = svg.append("g")
         .attr("stroke", "#fff")
         .attr("stroke-width", 1)
         .attr("fill", "000")
@@ -135,11 +121,34 @@ export function drawCartogram(config: Config,
         .attr("cx", d => d.x)
         .attr("cy", d => d.y);
 
+    document.getElementById('station-finder')!.addEventListener('input', (event) => {
+        if (!(event && event.target instanceof HTMLInputElement)) return;
+        let val = event.target.value.trim().toLowerCase();
+        graphNodes.classed("found-node", false);
+        if (val != '') {
+            graphNodes
+                .filter((d) => d.humanName.toLowerCase().includes(val))
+                .classed("found-node", true);
+        }
+    });
+
+    const homography = new Homography("piecewiseaffine");
+    const basemapElement = canvas.node();
+    if (!(basemapElement && (basemapElement instanceof HTMLCanvasElement))) {
+        throw new Error("Could not find canvas element with ID 'basemap'!");
+    }
+    const homographies: ImageData[] = [];
+    const numHomographies = 21;
+    const basemapContext = basemapElement.getContext("2d")!;
+    const basemapImage = new Image();
+    basemapImage.crossOrigin = "anonymous";
+    basemapImage.src = br.path;
+
     const pinnedCorners: [number, number][] =
         [[0, 0], [width, 0], [0, height], [width, height]];
-    function warpBasemap() {
+    function computeBasemapWarps() {
         let srcs: [number, number][] = [];
-        let dsts: [number, number][] = [];
+        let reldsts: [number, number, number, number][] = [];
         for (const s of nodes) {
             if ((0 > s.xGeo) || (s.xGeo >= width) || (0 > s.yGeo) || (s.yGeo >= height)) {
                 continue;
@@ -151,18 +160,69 @@ export function drawCartogram(config: Config,
                 continue;
             }
             srcs.push([s.xGeo, s.yGeo]);
-            dsts.push([s.x, s.y]);
+            reldsts.push([s.xGeo, s.x - s.xGeo, s.yGeo, s.y - s.yGeo]);
         }
         homography.setSourcePoints(srcs.concat(pinnedCorners));
-        homography.setDestinyPoints(dsts.concat(pinnedCorners));
-        basemapContext.clearRect(0, 0, width, height);
-        basemapContext.putImageData(homography.warp(), 0, 0);
+        for (const i of Array(numHomographies-1).keys()) {
+            homography.setDestinyPoints(reldsts
+                .map(([x, dx, y, dy]) => <[number, number]>[x + (i+1)/20*dx, y + (i+1)/20*dy])
+                .concat(pinnedCorners));
+            homographies.push(homography.warp());
+        }
     }
 
+    let warped = false;
+    function toggleBasemapWarp() {
+        let idx = warped? numHomographies-1: 0;
+        let prevTs: number;
+        function loop(ts: number) {
+            if (prevTs === undefined || (ts - prevTs > 30)) {
+                console.log('looping');
+                prevTs = ts;
+                basemapContext.clearRect(0, 0, width, height);
+                basemapContext.putImageData(homographies[idx], 0, 0);
+                if (warped) {
+                    idx -= 1;
+                    if (idx >= 0) {
+                        requestAnimationFrame(loop);
+                    } else {
+                        warped = false; // done, stop animating
+                    }
+                } else {
+                    idx += 1;
+                    if (idx < numHomographies) {
+                        requestAnimationFrame(loop);
+                    } else {
+                        warped = true; // done, stop animating
+                    }
+                }
+            } else {
+                requestAnimationFrame(loop); // wait a bit longer for next frame
+            }
+        }
+        requestAnimationFrame(loop);
+    }
+
+    function whenBasemapLoaded() {
+        basemapContext.drawImage(basemapImage, 0, 0, width, height);
+        basemapImage.style.display = "none";
+        let imgd = basemapContext.getImageData(0, 0, width, height);
+        homography.setImage(imgd);
+        homographies.push(imgd);
+        computeBasemapWarps();
+        toggleBasemapWarp();
+        document.getElementById('toggleWarp')!.addEventListener("click", toggleBasemapWarp);
+        document.addEventListener('keydown', (event) => {
+            if (!(event && event instanceof KeyboardEvent)) return;
+            if (event.key == "w" && (event.altKey || event.metaKey) && !event.repeat) {
+                toggleBasemapWarp();
+            }
+        });
+    }
     if (basemapImage.complete) {
-        warpBasemap();
+        whenBasemapLoaded();
     } else {
-        basemapImage.addEventListener("load", warpBasemap);
+        basemapImage.addEventListener("load", whenBasemapLoaded);
     }
 }
 
@@ -176,12 +236,12 @@ export const basemapLausanne: BasemapReference = {
     ref2E: 2_542_166,
     ref2N: 1_156_617,
 
-    path: "./public/lausanne/basemap.png",
+    path: "lausanne/basemap.png",
     originalWidth: 2687,
     originalHeight: 1565,
 }
 
-export const configLausanne: Config = { br: basemapLausanne, scale: 1/20, speed: 10 };
+export const configLausanne: Config = { br: basemapLausanne, speed: 10 };
 
 export const basemapNational: BasemapReference = {
     ref1X: 10,
@@ -193,9 +253,9 @@ export const basemapNational: BasemapReference = {
     ref2Y: 199,
     ref2N: 1263143.64,
 
-    path: "/basemap.png",
+    path: "train/basemap.png",
     originalWidth: 2032,
     originalHeight: 1293,
 };
 
-export const configNational: Config = { br: basemapNational, scale: 1/500, speed: 70 };
+export const configNational: Config = { br: basemapNational, speed: 70 };

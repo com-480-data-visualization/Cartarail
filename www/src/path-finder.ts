@@ -68,14 +68,17 @@ function parseDepartureArrivalTime(s: string): [string, string][] {
   }
 }
 
-const loaded = new Map<Dataset, Map<Table, boolean>>();
+export const loaded = new Map<Dataset, Map<Table, boolean>>();
 Object.values(Dataset).forEach(target => {
   loaded.set(target, new Map<Table, boolean>());
 });
 const allLoaded = new Map<Dataset, boolean>();
-export const stationIdMap = new Map<Station, string>();
-export const stationNameMap = new Map<string, Station>();
-export var geostations: GeoStation[] = [];
+export const stationIdMap = new Map(
+    Object.values(Dataset).map(v => [v, new Map<Station, string>()]));
+export const stationNameMap = new Map(
+    Object.values(Dataset).map(v => [v, new Map<string, Station>()]));
+export var geostations = new Map(
+    Object.values(Dataset).map(v => [v, <GeoStation[]>[]]));
 
 function getDbTableName(target: Dataset, table: Table): string {
   return `${target}_${table}`;
@@ -96,13 +99,16 @@ export function loadStationCSVToMap(target: Dataset) {
       });
       return res;
     })
-    .then(res => {
-      for (const row of res.data) {
-        stationIdMap.set(row.stop_id, row.stop_name);
-        stationNameMap.set(row.stop_name, row.stop_id);
-        let [stop_E, stop_N] = WGS84_to_LV95(row.stop_lat, row.stop_lon);
-        geostations.push({name: row.stop_id, humanName: row.stop_name, E: stop_E, N: stop_N});
-      }
+      .then(res => {
+          const sim = stationIdMap.get(target)!;
+          const snm = stationNameMap.get(target)!;
+          const gs = geostations.get(target)!;
+          for (const row of res.data) {
+              sim.set(row.stop_id, row.stop_name);
+              snm.set(row.stop_name, row.stop_id);
+              let [stop_E, stop_N] = WGS84_to_LV95(row.stop_lat, row.stop_lon);
+              gs.push({name: row.stop_id, humanName: row.stop_name, E: stop_E, N: stop_N});
+          }
       loaded.get(target)?.set(Table.Station, true);
       console.log(`${target} ${Table.Station}.csv is loaded into memory.`);
     })
@@ -336,11 +342,11 @@ function formatTimeDiff(date1: Date, date2: Date): string {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
 }
 
-function pathToString(path: Array<Target>, startTime: Date): string {
+function pathToString(target: Dataset, path: Array<Target>, startTime: Date): string {
   let s = "", arrivingFrom = null, to = null, fromTime = "", toTime = "";
   for (const arrival of path) {
-    arrivingFrom = stationIdMap.get(arrival.arrivingFrom);
-    to = stationIdMap.get(arrival.station);
+    arrivingFrom = stationIdMap.get(target)!.get(arrival.arrivingFrom);
+    to = stationIdMap.get(target)!.get(arrival.station);
     fromTime = tripDateToString(startTime, arrival.departureTime);
     toTime = tripDateToString(startTime, arrival.arrivalTime);
     s += `${arrivingFrom} @ ${fromTime}  -----(${arrival.routeDesc}) ${arrival.routeShortName}---->  ${to} @ ${toTime} \n`;
@@ -352,6 +358,9 @@ function pathToString(path: Array<Target>, startTime: Date): string {
   return s;
 }
 
-export function getPathString(earliest: Map<Station, TargetInfo>, dest: Station, startTime: Date): string {
-  return pathToString(getPath(earliest, dest), startTime);
+export function getPathString(target: Dataset,
+                              earliest: Map<Station, TargetInfo>,
+                              dest: Station,
+                              startTime: Date): string {
+    return pathToString(target, getPath(earliest, dest), startTime);
 }

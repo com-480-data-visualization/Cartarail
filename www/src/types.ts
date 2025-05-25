@@ -23,7 +23,6 @@ export type BasemapReference = {
 
 export type Config = {
     br: BasemapReference,
-    scale: number, /* pixels per meter */
     speed: number, /* kilometers per hour */
 }
 

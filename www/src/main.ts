@@ -39,4 +39,9 @@ async function ui(target: Dataset) {
   }
 }
 
-(async () => { await ui(Dataset.Lausanne); })();
+const registerUI = async () => { await ui(Dataset.Lausanne); };
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", registerUI);
+} else {
+    registerUI();
+}

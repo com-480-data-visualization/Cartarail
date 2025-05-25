@@ -1,96 +1,91 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+    --epfl-rouge: #ff0000;
+    --epfl-groseille: #b51f1f;
+    --epfl-léman: #00a79f;
+    --epfl-canard: #007480;
+    --epfl-taupe: #413d3a;
+    --epfl-perle: #cac7c7;
+    font-family: "Suisse Int'l", 'Helvetica', 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 400;
+    color: black;
+    background-color: white;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+    max-width: 40em;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0 auto;
+    margin-left: 20%;
+}
+
+header {
+    margin-bottom: 1.5em;
+}
+
+main {
+    flex: 1;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+    margin-top: 0.75em;
+    margin-bottom: 0.25em;
 }
 
-#app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+p {
+    margin: 0.25em 0;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #3178c6aa);
+a {
+    color: var(--epfl-canard);
 }
 
-.card {
-  padding: 2em;
+a:visited {
+    color: inherit;
 }
 
-.read-the-docs {
-  color: #888;
+.input-bar {
+    display: flex;
+    gap: 0.5em;
+    margin-bottom: 1em;
+    align-items: baseline;
+}
+
+input, button, select {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    padding: 0.3em 0.5em 0.1em 0.5em;
+}
+
+input {
+    flex: 1;
+}
+
+#startTime {
+    max-width: 10em;
+}
+
+#finder-box {
+    float: right;
+    clear: left;
+    margin-right: -19em;
+    width: 18em;
+    visibility: hidden;
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+img.placeholder {
+    width: 100%;
+}
+
+footer {
+    font-size: small;
+    color: #aaa;
+    margin-top: 2em;
+    padding-bottom: 1em;
 }

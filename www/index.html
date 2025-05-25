@@ -1,23 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Cartarail (COM-480 SP25 final project)</title>
-    </head>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Cartarail</title>
+      <link rel="stylesheet" href="/src/style.css?version=1">
+      <script type="module" src="/src/main.ts"></script>
+  </head>
 
-    <body>
-        <h1 id="heading">Hello World!</h1>
+  <body>
+    <header>
+      <h1>Cartarail</h1>
+      <p>a cartogram where visual distance reflects travel time by public transit</p>
+      <p>EPFL COM-480 Spring 2025 final project</p>
+      <p>by Shardul Chiplunkar, Yawen Guan, and Alexandre Pinazza</p>
+    </header>
 
-        <input list="stationList" type="text" id="startStation" placeholder="from ...">
-        <datalist id="stationList"> </datalist>
+    <main>
+      <div class="input-bar">
+        <label for="scaleList">scale:</label>
+        <select id="scaleList">
+          <option value="lausanne">Lausanne metropolitan area</option>
+          <option value="train">Swiss national rail network</option>
+        </select>
+      </div>
+      <div class="input-bar">
+        <input list="stationList" type="text" id="startStation" placeholder="from…">
+        <datalist id="stationList"></datalist>
+        <input id="startTime" placeholder="start time (HH:mm:ss)">
+        <button id="searchBtn">cartogram!</button>
+      </div>
 
-        <input id="startTime" placeholder="start time HH:mm:ss" />
-        <button id="searchBtn">search</button>
-
-        <div id="spring-layout"></div>
+      <div id="results">
+        <div id="finder-box">
+          <div class="input-bar">
+            <label for="station-finder">find:</label>
+            <input type="text" id="station-finder" placeholder="Lausanne-Flon">
+          </div>
+          <div id="info-box">
+            <p>info here</p>
+          </div>
+        </div>
+        <div id="spring-layout">
+          <img src="lausanne/basemap.png" class="placeholder">
+        </div>
         <div id="result"></div>
+      </div>
+    </main>
 
-        <script type="module" src="/src/main.ts"></script>
-    </body>
+    <footer>
+      <p>Credits: d3-force, d3-selection © 2010–2021 Mike Bostock; datastructures-js/priority-queue © 2020 Eyas Ranjous; AlaSQL © 2014–2025 Andrey Gershun; homography © 2021 Eric Cañas; papaparse © 2015 Matthew Holt. All other code is © 2025 Shardul Chiplunkar, Yawen Guan, and Alexandre Pinazza, made available under the MIT License.</p>
+    </footer>
+  </body>
 </html>

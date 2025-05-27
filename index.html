@@ -1,22 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Cartarail (COM-480 SP25 final project)</title>
-      <script type="module" crossorigin src="/Cartarail/assets/index-D4u1Qbjj.js"></script>
-    </head>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Cartarail</title>
+    <script type="module" crossorigin src="/Cartarail/assets/index-DNPb4Tnt.js"></script>
+    <link rel="stylesheet" crossorigin href="/Cartarail/assets/index-CQKM5j_v.css">
+  </head>
 
-    <body>
-        <h1 id="heading">Hello World!</h1>
+  <body>
+    <header>
+      <h1>Cartarail</h1>
+      <p>a cartogram where visual distance reflects travel time by public transit</p>
+      <p>EPFL COM-480 Spring 2025 final project</p>
+      <p>by Shardul Chiplunkar, Yawen Guan, and Alexandre Pinazza</p>
+    </header>
 
-        <input list="stationList" type="text" id="startStation" placeholder="from ...">
-        <datalist id="stationList"> </datalist>
+    <main>
+      <div class="input-bar">
+        <label for="scaleList">scale:</label>
+        <select id="scaleList" autocomplete="off">
+          <option value="lausanne" selected>Lausanne metropolitan area</option>
+          <option value="train">Swiss national rail network</option>
+        </select>
+      </div>
+      <form autocomplete="off" name="initial-config" id="initialConfig" class="input-bar">
+        <label for="startStation" class="hidden">start station</label>
+        <input list="stationList" type="text" id="startStation" placeholder="from…">
+        <datalist id="stationList"></datalist>
+        <label for="startTime" class="hidden">start time</label>
+        <input id="startTime" placeholder="start time (HH:mm:ss)">
+        <button name="cartogram">cartogram!</button>
+      </form>
 
-        <input id="startTime" placeholder="start time HH:mm:ss" />
-        <button id="searchBtn">search</button>
-        <div id="result"></div>
+      <div id="finder-box" class="hidden">
+        <div class="input-bar">
+          <label for="station-finder">find:</label>
+          <input type="text" list="stationList" id="station-finder" placeholder="Lausanne-Flon">
+        </div>
+        <div class="input-bar">
+          <button type="button" id="toggleWarp">toggle <u>w</u>arp</button>
+        </div>
+        <div id="info-box">
+        </div>
+      </div>
 
-        <div id="spring-layout"></div>
-    </body>
+      <div id="spring-layout">
+        <img src="lausanne/basemap.png" class="placeholder">
+      </div>
+    </main>
+
+    <footer>
+      <p>Credits: d3-force, d3-selection © 2010–2021 Mike Bostock; datastructures-js/priority-queue © 2020 Eyas Ranjous; AlaSQL © 2014–2025 Andrey Gershun; homography © 2021 Eric Cañas; papaparse © 2015 Matthew Holt. All other code is © 2025 Shardul Chiplunkar, Yawen Guan, and Alexandre Pinazza, made available under the MIT License.</p>
+    </footer>
+  </body>
 </html>

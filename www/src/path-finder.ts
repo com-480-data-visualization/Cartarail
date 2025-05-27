@@ -6,16 +6,11 @@ import {
 } from '@datastructures-js/priority-queue';
 
 import type { Station, GeoStation, Target, TargetInfo } from "./common";
-import { WGS84_to_LV95, infoBoxId } from "./common";
+import { initDatasetKeyed, Dataset, WGS84_to_LV95, infoBoxId } from "./common";
 
 const base = import.meta.env.BASE_URL;
 
 // =========== load data ==========
-
-export enum Dataset {
-  Lausanne = "lausanne",
-  Train = "train"
-}
 
 enum Table {
   Station = "stations",
@@ -68,24 +63,18 @@ function parseDepartureArrivalTime(s: string): [string, string][] {
   }
 }
 
-export const loaded = new Map<Dataset, Map<Table, boolean>>();
-Object.values(Dataset).forEach(target => {
-  loaded.set(target, new Map<Table, boolean>());
-});
-const allLoaded = new Map<Dataset, boolean>();
-export const stationIdMap = new Map(
-    Object.values(Dataset).map(v => [v, new Map<Station, string>()]));
-export const stationNameMap = new Map(
-    Object.values(Dataset).map(v => [v, new Map<string, Station>()]));
-export var geostations = new Map(
-    Object.values(Dataset).map(v => [v, <GeoStation[]>[]]));
+export const loaded = initDatasetKeyed(() => new Map<Table, boolean>());
+const allLoaded = initDatasetKeyed(() => false);
+export const stationIdMap = initDatasetKeyed(() => new Map<Station, string>());
+export const stationNameMap = initDatasetKeyed(() => new Map<string, Station>());
+export var geostations = initDatasetKeyed(() => <GeoStation[]>[]);
 
 function getDbTableName(target: Dataset, table: Table): string {
   return `${target}_${table}`;
 }
 
 export function loadStationCSVToMap(target: Dataset) {
-  if (loaded.get(target)?.get(Table.Station)) return;
+  if (loaded[target].get(Table.Station)) return;
 
   return fetch(`${base}${target}/${Table.Station}.csv`)
     .then(response => {
@@ -100,16 +89,16 @@ export function loadStationCSVToMap(target: Dataset) {
       return res;
     })
       .then(res => {
-          const sim = stationIdMap.get(target)!;
-          const snm = stationNameMap.get(target)!;
-          const gs = geostations.get(target)!;
+          const sim = stationIdMap[target];
+          const snm = stationNameMap[target];
+          const gs = geostations[target];
           for (const row of res.data) {
               sim.set(row.stop_id, row.stop_name);
               snm.set(row.stop_name, row.stop_id);
               let [stop_E, stop_N] = WGS84_to_LV95(row.stop_lat, row.stop_lon);
               gs.push({name: row.stop_id, humanName: row.stop_name, E: stop_E, N: stop_N});
           }
-      loaded.get(target)?.set(Table.Station, true);
+      loaded[target].set(Table.Station, true);
       console.log(`${target} ${Table.Station}.csv is loaded into memory.`);
     })
     .catch(error => {
@@ -119,7 +108,7 @@ export function loadStationCSVToMap(target: Dataset) {
 }
 
 async function loadTransportCSVToDB(target: Dataset){
-  if (loaded.get(target)?.get(Table.Transport)) return;
+  if (loaded[target].get(Table.Transport)) return;
 
   const response = await fetch(`${base}${target}/${Table.Transport}.csv`);
   const csvText = await response.text();
@@ -148,12 +137,12 @@ async function loadTransportCSVToDB(target: Dataset){
   alasql(`CREATE TABLE ${name}`);
   alasql.tables[name].data = records;
 
-  loaded.get(target)?.set(Table.Transport, true);
+  loaded[target].set(Table.Transport, true);
   console.log(`${target} ${Table.Transport}.csv is loaded into memory.`);
 }
 
 async function loadWalkCSVToDB(target: Dataset) {
-  if (loaded.get(target)?.get(Table.Walk)) return;
+  if (loaded[target].get(Table.Walk)) return;
 
   const response = await fetch(`${base}${target}/${Table.Walk}.csv`);
   const csvText = await response.text();
@@ -173,7 +162,7 @@ async function loadWalkCSVToDB(target: Dataset) {
   alasql(`CREATE TABLE ${name}`);
   alasql.tables[name].data = parsed.data;
 
-  loaded.get(target)?.set(Table.Walk, true);
+  loaded[target].set(Table.Walk, true);
   console.log(`${target} ${Table.Walk}.csv is loaded into memory.`);
 }
 
@@ -184,9 +173,9 @@ async function loadCSV(target: Dataset) {
     loadWalkCSVToDB(target)
   ]);
 
-  allLoaded.set(target, Object.values(Table).every(table =>
-    loaded.get(target)?.get(table) === true
-  ));
+  allLoaded[target] = Object.values(Table).every(table =>
+    loaded[target].get(table) === true
+  );
 }
 
 // =========== shortest path ==========
@@ -237,10 +226,11 @@ function getClosest(time: Date, departureArrivalTime: [string, string][]): [Date
 }
 
 export async function dijkstra(target: Dataset, startStation: Station, startTime: Date) {
-  if (!allLoaded.has(target) || allLoaded.get(target) === false) {
+  if (!allLoaded[target]) {
     await loadCSV(target);
   }
 
+  console.log("Running dijkstra ...");
   let earliest = new Map<Station, TargetInfo>();
   let queue = new PriorityQueue<Target>(compareTarget);
   queue.push({
@@ -339,8 +329,8 @@ function formatTimeDiff(date1: Date, date2: Date): string {
 function pathToString(target: Dataset, path: Array<Target>, startTime: Date): string {
   let s = "", arrivingFrom = null, to = null, fromTime = "", toTime = "";
   for (const arrival of path) {
-    arrivingFrom = stationIdMap.get(target)!.get(arrival.arrivingFrom);
-    to = stationIdMap.get(target)!.get(arrival.station);
+    arrivingFrom = stationIdMap[target].get(arrival.arrivingFrom);
+    to = stationIdMap[target].get(arrival.station);
     fromTime = tripDateToString(startTime, arrival.departureTime);
     toTime = tripDateToString(startTime, arrival.arrivalTime);
     s += `${arrivingFrom} @ ${fromTime}  -----(${arrival.routeDesc}) ${arrival.routeShortName}---->  ${to} @ ${toTime} \n`;
@@ -361,7 +351,7 @@ export function getPathString(target: Dataset,
 
 export function pathInfoHTML(dataset: Dataset, earliest: Map<Station, TargetInfo>,
                              destination: Station, startTime: Date): Element {
-    const sim = stationIdMap.get(dataset)!;
+    const sim = stationIdMap[dataset];
     let path = getPath(earliest, destination);
     let info =  document.createElement("table");
     info.setAttribute("id", infoBoxId(destination));

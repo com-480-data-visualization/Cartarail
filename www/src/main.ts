@@ -1,13 +1,13 @@
-import { Dataset, geostations, loadStationCSVToMap, dateSetTime,
+import { geostations, loadStationCSVToMap, dateSetTime,
          stationNameMap, dijkstra, pathInfoHTML } from "./path-finder";
-import { drawCartogram, configLausanne, configNational } from "./spring-layout";
-import { mustGetElementById, Station } from "./common";
+import { drawCartogram, configs } from "./spring-layout";
+import { Dataset, mustGetElementById, Station } from "./common";
 
 async function populateStationList(target: Dataset) {
     await loadStationCSVToMap(target);
     const stationList = mustGetElementById('stationList');
     stationList.replaceChildren();
-    for (const key of stationNameMap.get(target)!.keys()) {
+    for (const key of stationNameMap[target].keys()) {
         const option = document.createElement('option');
         option.value = key;
         stationList.appendChild(option);
@@ -20,7 +20,7 @@ async function computeCartogram(target: Dataset) {
     const startTimeStr = (document.getElementById('startTime') as HTMLInputElement).value;
     const startTime = dateSetTime(new Date(), startTimeStr);
 
-    const startStation = stationNameMap.get(target)!.get(startStationName);
+    const startStation = stationNameMap[target].get(startStationName);
     if (!startStation) return;
     const earliest = await dijkstra(target, startStation, startTime);
 
@@ -29,13 +29,13 @@ async function computeCartogram(target: Dataset) {
         infoBox.append(pathInfoHTML(target, earliest, station, startTime));
     }
 
-    drawCartogram(configLausanne, geostations.get(target)!,
+    drawCartogram(configs[target], geostations[target],
                   startStation, startTime, earliest, showPathForStation);
 }
 
 const scaleList = mustGetElementById('scaleList');
 const basemapOriginalImage = document.createElement('img');
-basemapOriginalImage.src = configLausanne.br.path;
+basemapOriginalImage.src = configs.lausanne.br.path;
 basemapOriginalImage.classList.add('placeholder');
 mustGetElementById('spring-layout').append(basemapOriginalImage);
 const finderBox = mustGetElementById('finder-box');
@@ -59,11 +59,11 @@ function registerUI() {
         switch(event.target.value) {
             case "lausanne":
                 dataset = Dataset.Lausanne;
-                basemapOriginalImage.src = configLausanne.br.path;
+                basemapOriginalImage.src = configs.lausanne.br.path;
                 break;
             case "train":
                 dataset = Dataset.Train;
-                basemapOriginalImage.src = configNational.br.path;
+                basemapOriginalImage.src = configs.train.br.path;
                 break;
             default:
                 throw new Error("invalid option for scale");

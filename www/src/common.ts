@@ -26,6 +26,20 @@ export type Config = {
     speed: number, /* kilometers per hour */
 }
 
+export enum Dataset {
+  Lausanne = "lausanne",
+  Train = "train"
+}
+
+export type DatasetKeyed<Type> = {
+    lausanne: Type,
+    train: Type,
+}
+
+export function initDatasetKeyed<Type>(initType: () => Type): DatasetKeyed<Type> {
+    return {"lausanne": initType(), "train": initType()};
+}
+
 // from https://www.swisstopo.admin.ch/en/transformation-calculation-services
 export function WGS84_to_LV95(lat: number, lon: number): [number, number] {
     let auxlat = (lat * 3600 - 169_028.66) / 10_000;

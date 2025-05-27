@@ -2,7 +2,7 @@ import * as d3force from "d3-force";
 import * as d3selection from "d3-selection";
 import { Homography } from "homography";
 import type { BasemapReference, Config, Station, GeoStation, TargetInfo } from "./common";
-import { mustGetElementById, infoBoxId } from "./common";
+import { DatasetKeyed, mustGetElementById, infoBoxId } from "./common";
 
 export function drawCartogram(config: Config,
                               stations: GeoStation[],
@@ -135,13 +135,18 @@ export function drawCartogram(config: Config,
             }
         });
 
+    // Normalize accented characters into their base characters (e.g., á to a)
+    function normalizeName(str: string): string {
+        return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+    }
+
     document.getElementById('station-finder')!.addEventListener('input', (event) => {
         if (!(event && event.target instanceof HTMLInputElement)) return;
-        let val = event.target.value.trim().toLowerCase();
+        let val = normalizeName(event.target.value);
         graphNodes.classed("found-node", false);
         if (val != '') {
             graphNodes
-                .filter((d) => d.humanName.toLowerCase().includes(val))
+                .filter((d) => normalizeName(d.humanName).includes(val))
                 .classed("found-node", true);
         }
     });
@@ -255,7 +260,7 @@ export const basemapLausanne: BasemapReference = {
     originalHeight: 1565,
 }
 
-export const configLausanne: Config = { br: basemapLausanne, speed: 10 };
+const configLausanne: Config = { br: basemapLausanne, speed: 10 };
 
 export const basemapNational: BasemapReference = {
     ref1X: 10,
@@ -272,4 +277,7 @@ export const basemapNational: BasemapReference = {
     originalHeight: 1293,
 };
 
-export const configNational: Config = { br: basemapNational, speed: 70 };
+const configNational: Config = { br: basemapNational, speed: 70 };
+
+export const configs: DatasetKeyed<Config> =
+    { "lausanne": configLausanne, "train": configNational };

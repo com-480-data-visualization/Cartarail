@@ -6,7 +6,7 @@ import {
 } from '@datastructures-js/priority-queue';
 
 import type { Station, GeoStation, Target, TargetInfo } from "./common";
-import { Dataset, WGS84_to_LV95 } from "./common";
+import { StationInfo, Dataset, normalize, WGS84_to_LV95 } from "./common";
 
 const base = import.meta.env.BASE_URL;
 
@@ -72,16 +72,13 @@ export const stationIdMap = new Map(
     Object.values(Dataset).map(v => [v, new Map<Station, string>()]));
 export const stationNameMap = new Map(
     Object.values(Dataset).map(v => [v, new Map<string, Station>()]));
+export const stationCache = new Map(
+    Object.values(Dataset).map(v => [v, new Array<StationInfo>()]));
 export var geostations = new Map(
     Object.values(Dataset).map(v => [v, <GeoStation[]>[]]));
 
 function getDbTableName(target: Dataset, table: Table): string {
   return `${target}_${table}`;
-}
-
-// Normalize accented characters into their base characters (e.g., á to a)
-function normalizeName(str: string): string {
-  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
 export function loadStationCSVToMap(target: Dataset) {
@@ -102,11 +99,12 @@ export function loadStationCSVToMap(target: Dataset) {
       .then(res => {
           const sim = stationIdMap.get(target)!;
           const snm = stationNameMap.get(target)!;
+          const sc = stationCache.get(target)!;
           const gs = geostations.get(target)!;
           for (const row of res.data) {
-              const name = normalizeName(row.stop_name);
-              sim.set(row.stop_id, name);
-              snm.set(name, row.stop_id);
+              sim.set(row.stop_id, row.stop_name);
+              snm.set(row.stop_name, row.stop_id);
+              sc.push({ name: row.stop_name, normalizedName: normalize(row.stop_name) });
               let [stop_E, stop_N] = WGS84_to_LV95(row.stop_lat, row.stop_lon);
               gs.push({name: row.stop_id, humanName: row.stop_name, E: stop_E, N: stop_N});
           }

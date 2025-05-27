@@ -1,11 +1,13 @@
 import { geostations, loadStationCSVToMap, dateSetTime,
-         stationNameMap, dijkstra, pathInfoHTML } from "./path-finder";
+         stationNameMap, stationCache, dijkstra, pathInfoHTML } from "./path-finder";
 import { drawCartogram, configs } from "./spring-layout";
-import { Dataset, mustGetElementById, Station, infoBoxId } from "./common";
+import { Dataset, mustGetElementById, Station, infoBoxId, normalize } from "./common";
+
+const startStation: HTMLInputElement = document.getElementById('startStation') as HTMLInputElement;
+const stationList = mustGetElementById('stationList');
 
 async function populateStationList(target: Dataset) {
     await loadStationCSVToMap(target);
-    const stationList = mustGetElementById('stationList');
     stationList.replaceChildren();
     for (const key of stationNameMap.get(target)!.keys()) {
         const option = document.createElement('option');
@@ -15,14 +17,12 @@ async function populateStationList(target: Dataset) {
 }
 
 async function computeCartogram(target: Dataset) {
-    const startStationName =
-        (document.getElementById('startStation') as HTMLInputElement).value;
     const startTimeStr = (document.getElementById('startTime') as HTMLInputElement).value;
     const startTime = dateSetTime(new Date(), startTimeStr);
 
-    const startStation = stationNameMap.get(target)!.get(startStationName);
+    const startStationId = stationNameMap.get(target)!.get(startStation!.value)!;
     if (!startStation) return;
-    const earliest = await dijkstra(target, startStation, startTime);
+    const earliest = await dijkstra(target, startStationId, startTime);
 
     const infoBox = mustGetElementById('info-box');
     function showPathForStation(station: Station) {
@@ -32,7 +32,7 @@ async function computeCartogram(target: Dataset) {
     }
 
     drawCartogram(configs.get(target)!, geostations.get(target)!,
-                  startStation, startTime, earliest, showPathForStation);
+                  startStationId, startTime, earliest, showPathForStation);
 }
 
 /*
@@ -56,6 +56,17 @@ const initialConfigForm = mustGetElementById('initialConfig') as HTMLFormElement
 
 async function setDataset(dataset: Dataset) {
     await populateStationList(dataset);
+    startStation!.addEventListener("input", () => {
+        const query = normalize(startStation.value);
+        stationList.replaceChildren();
+        for (const {name, normalizedName} of stationCache.get(dataset)!){
+            if (normalizedName.includes(query)) {
+                const option = document.createElement('option');
+                option.value = name;
+                stationList.appendChild(option);
+            }
+        }
+    });
     initialConfigForm!.onsubmit = async (event) => {
         event.preventDefault();
         await computeCartogram(dataset);

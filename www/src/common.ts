@@ -2,6 +2,11 @@ export type Station = string;
 // E, N are meters in relation to the observatory in Bern, which is at 2600000/1200000
 export type GeoStation =  { name: Station, humanName: string, E: number, N: number }
 
+export interface StationInfo {
+    name: string;
+    normalizedName: string;
+}
+
 export interface TargetInfo {
   arrivalTime: Date;
   totalWalkTime: number;
@@ -29,6 +34,11 @@ export type Config = {
 export enum Dataset {
   Lausanne = "lausanne",
   Train = "train"
+}
+
+// Normalize accented characters into their base characters (e.g., á to a)
+export function normalize(str: string): string {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
 
 // from https://www.swisstopo.admin.ch/en/transformation-calculation-services

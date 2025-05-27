@@ -22,7 +22,9 @@ async function computeCartogram(target: Dataset) {
 
     const startStation = stationNameMap[target].get(startStationName);
     if (!startStation) return;
+    Array.from(initialConfigForm.elements).forEach((e) => e.setAttribute('disabled', ''));
     const earliest = await dijkstra(target, startStation, startTime);
+    Array.from(initialConfigForm.elements).forEach((e) => e.removeAttribute('disabled'));
 
     const infoBox = mustGetElementById('info-box');
     function showPathForStation(station: Station) {

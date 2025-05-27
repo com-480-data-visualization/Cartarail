@@ -104,8 +104,9 @@ export function loadStationCSVToMap(target: Dataset) {
           const snm = stationNameMap.get(target)!;
           const gs = geostations.get(target)!;
           for (const row of res.data) {
-              sim.set(row.stop_id, row.stop_name);
-              snm.set(normalizeName(row.stop_name), row.stop_id);
+              const name = normalizeName(row.stop_name);
+              sim.set(row.stop_id, name);
+              snm.set(name, row.stop_id);
               let [stop_E, stop_N] = WGS84_to_LV95(row.stop_lat, row.stop_lon);
               gs.push({name: row.stop_id, humanName: row.stop_name, E: stop_E, N: stop_N});
           }

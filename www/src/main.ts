@@ -1,7 +1,7 @@
 import { Dataset, geostations, loadStationCSVToMap, dateSetTime,
          stationNameMap, dijkstra, pathInfoHTML } from "./path-finder";
 import { drawCartogram, configLausanne, configNational } from "./spring-layout";
-import { mustGetElementById, Station, infoBoxId } from "./common";
+import { mustGetElementById, Station } from "./common";
 
 async function populateStationList(target: Dataset) {
     await loadStationCSVToMap(target);
@@ -26,31 +26,18 @@ async function computeCartogram(target: Dataset) {
 
     const infoBox = mustGetElementById('info-box');
     function showPathForStation(station: Station) {
-        let info = pathInfoHTML(target, earliest, station, startTime);
-        info.setAttribute("id", infoBoxId(station));
-        infoBox.append(info);
+        infoBox.append(pathInfoHTML(target, earliest, station, startTime));
     }
 
     drawCartogram(configLausanne, geostations.get(target)!,
                   startStation, startTime, earliest, showPathForStation);
 }
 
-/*
-  TODO
-    slider for relative strength
-
-  DONE (pending data)
-    Lausanne/National
-
-  DONE
-    animate between warped and normal
-    search for destination
-    hover for path info
- */
-
 const scaleList = mustGetElementById('scaleList');
-const basemapOriginalImage =
-    mustGetElementById('spring-layout').getElementsByTagName('img')[0];
+const basemapOriginalImage = document.createElement('img');
+basemapOriginalImage.src = configLausanne.br.path;
+basemapOriginalImage.classList.add('placeholder');
+mustGetElementById('spring-layout').append(basemapOriginalImage);
 const finderBox = mustGetElementById('finder-box');
 const initialConfigForm = mustGetElementById('initialConfig') as HTMLFormElement;
 
@@ -83,6 +70,8 @@ function registerUI() {
         }
         setDataset(dataset);
         finderBox!.classList.add('hidden');
+        mustGetElementById('spring-layout').replaceChildren(basemapOriginalImage);
+        initialConfigForm.reset();
     });
 }
 

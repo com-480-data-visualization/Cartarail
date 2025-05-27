@@ -6,7 +6,7 @@ import {
 } from '@datastructures-js/priority-queue';
 
 import type { Station, GeoStation, Target, TargetInfo } from "./common";
-import { WGS84_to_LV95 } from "./common";
+import { WGS84_to_LV95, infoBoxId } from "./common";
 
 const base = import.meta.env.BASE_URL;
 
@@ -364,6 +364,7 @@ export function pathInfoHTML(dataset: Dataset, earliest: Map<Station, TargetInfo
     const sim = stationIdMap.get(dataset)!;
     let path = getPath(earliest, destination);
     let info =  document.createElement("table");
+    info.setAttribute("id", infoBoxId(destination));
     let infoHead = document.createElement("thead");
     infoHead.innerHTML = `
 <tr>

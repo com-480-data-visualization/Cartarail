@@ -6,16 +6,11 @@ import {
 } from '@datastructures-js/priority-queue';
 
 import type { Station, GeoStation, Target, TargetInfo } from "./common";
-import { WGS84_to_LV95 } from "./common";
+import { Dataset, WGS84_to_LV95 } from "./common";
 
 const base = import.meta.env.BASE_URL;
 
 // =========== load data ==========
-
-export enum Dataset {
-  Lausanne = "lausanne",
-  Train = "train"
-}
 
 enum Table {
   Station = "stations",
@@ -84,6 +79,11 @@ function getDbTableName(target: Dataset, table: Table): string {
   return `${target}_${table}`;
 }
 
+// Normalize accented characters into their base characters (e.g., á to a)
+function normalizeName(str: string): string {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 export function loadStationCSVToMap(target: Dataset) {
   if (loaded.get(target)?.get(Table.Station)) return;
 
@@ -105,7 +105,7 @@ export function loadStationCSVToMap(target: Dataset) {
           const gs = geostations.get(target)!;
           for (const row of res.data) {
               sim.set(row.stop_id, row.stop_name);
-              snm.set(row.stop_name, row.stop_id);
+              snm.set(normalizeName(row.stop_name), row.stop_id);
               let [stop_E, stop_N] = WGS84_to_LV95(row.stop_lat, row.stop_lon);
               gs.push({name: row.stop_id, humanName: row.stop_name, E: stop_E, N: stop_N});
           }
@@ -241,6 +241,7 @@ export async function dijkstra(target: Dataset, startStation: Station, startTime
     await loadCSV(target);
   }
 
+  console.log("Running dijkstra ...");
   let earliest = new Map<Station, TargetInfo>();
   let queue = new PriorityQueue<Target>(compareTarget);
   queue.push({

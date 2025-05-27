@@ -1,7 +1,7 @@
-import { Dataset, geostations, loadStationCSVToMap, dateSetTime,
+import { geostations, loadStationCSVToMap, dateSetTime,
          stationNameMap, dijkstra, pathInfoHTML } from "./path-finder";
-import { drawCartogram, configLausanne, configNational } from "./spring-layout";
-import { mustGetElementById, Station, infoBoxId } from "./common";
+import { drawCartogram, configs } from "./spring-layout";
+import { Dataset, mustGetElementById, Station, infoBoxId } from "./common";
 
 async function populateStationList(target: Dataset) {
     await loadStationCSVToMap(target);
@@ -31,7 +31,7 @@ async function computeCartogram(target: Dataset) {
         infoBox.append(info);
     }
 
-    drawCartogram(configLausanne, geostations.get(target)!,
+    drawCartogram(configs.get(target)!, geostations.get(target)!,
                   startStation, startTime, earliest, showPathForStation);
 }
 
@@ -72,11 +72,11 @@ function registerUI() {
         switch(event.target.value) {
             case "lausanne":
                 dataset = Dataset.Lausanne;
-                basemapOriginalImage.src = configLausanne.br.path;
+                basemapOriginalImage.src = configs.get(Dataset.Lausanne)!.br.path;
                 break;
             case "train":
                 dataset = Dataset.Train;
-                basemapOriginalImage.src = configNational.br.path;
+                basemapOriginalImage.src = configs.get(Dataset.Train)!.br.path;
                 break;
             default:
                 throw new Error("invalid option for scale");

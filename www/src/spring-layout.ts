@@ -2,7 +2,7 @@ import * as d3force from "d3-force";
 import * as d3selection from "d3-selection";
 import { Homography } from "homography";
 import type { BasemapReference, Config, Station, GeoStation, TargetInfo } from "./common";
-import { mustGetElementById, infoBoxId } from "./common";
+import { Dataset, mustGetElementById, infoBoxId } from "./common";
 
 export function drawCartogram(config: Config,
                               stations: GeoStation[],
@@ -255,7 +255,7 @@ export const basemapLausanne: BasemapReference = {
     originalHeight: 1565,
 }
 
-export const configLausanne: Config = { br: basemapLausanne, speed: 10 };
+const configLausanne: Config = { br: basemapLausanne, speed: 10 };
 
 export const basemapNational: BasemapReference = {
     ref1X: 10,
@@ -272,4 +272,8 @@ export const basemapNational: BasemapReference = {
     originalHeight: 1293,
 };
 
-export const configNational: Config = { br: basemapNational, speed: 70 };
+const configNational: Config = { br: basemapNational, speed: 70 };
+
+export const configs = new Map<Dataset, Config>(); 
+configs.set(Dataset.Lausanne, configLausanne);
+configs.set(Dataset.Train, configNational);

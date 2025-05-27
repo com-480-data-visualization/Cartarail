@@ -290,6 +290,7 @@ export async function dijkstra(target: Dataset, startStation: Station, startTime
 }
 
 function getPath(earliest: Map<Station, TargetInfo>, dest: Station): Array<Target> {
+  if(!earliest.get(dest)) return [];
   const path: Array<Target> = [];
   let curArrival: Target = { ...earliest.get(dest)!, station: dest };
   let nextArrival: Target | null = null;

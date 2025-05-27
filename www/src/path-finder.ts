@@ -233,22 +233,19 @@ export async function dijkstra(target: Dataset, startStation: Station, startTime
   console.log("Running dijkstra ...");
   let earliest = new Map<Station, TargetInfo>();
   let queue = new PriorityQueue<Target>(compareTarget);
-  queue.push({
-    station: startStation,
+  let startInfo = {
     arrivalTime: startTime,
     totalWalkTime: 0,
     arrivingFrom: "",
     departureTime: startTime,
     routeDesc: "",
     routeShortName: "",
-  });
-  let cur = queue.dequeue();
-  while(cur) {
-    if (earliest.has(cur.station)){
-      cur = queue.dequeue();
-      continue;
-    }
-    earliest.set(cur.station, cur);
+  };
+  earliest.set(startStation, startInfo);
+  queue.push({ ...startInfo, station: startStation});
+  while(!queue.isEmpty()) {
+    const cur = queue.dequeue()!;
+
     // reachable by public transportation
     const tranRecords = alasql(`SELECT * FROM ${getDbTableName(target, Table.Transport)} WHERE start_station = "${cur.station}"`) as TransportTableRecord[];
     for (const record of tranRecords) {
@@ -258,33 +255,42 @@ export async function dijkstra(target: Dataset, startStation: Station, startTime
       }
       const departureArrivalTime = getClosest(at, record.departure_arrival_time);
       if (departureArrivalTime != null) {
-        queue.push({
-          station: record.next_station,
-          arrivalTime: departureArrivalTime[1],
-          totalWalkTime: cur.totalWalkTime,
-          arrivingFrom: record.start_station,
-          departureTime: departureArrivalTime[0],
-          routeDesc: record.route_desc,
-          routeShortName: record.route_short_name,
-        });
+        const dest = record.next_station;
+        const arrivalTime = departureArrivalTime[1];
+        if (!earliest.get(dest) || arrivalTime < earliest.get(dest)!.arrivalTime) {
+          const targetInfo: TargetInfo = {
+            arrivalTime: arrivalTime,
+            totalWalkTime: cur.totalWalkTime,
+            arrivingFrom: record.start_station,
+            departureTime: departureArrivalTime[0],
+            routeDesc: record.route_desc,
+            routeShortName: record.route_short_name,
+          };
+          earliest.set(dest, targetInfo);
+          queue.push({ ...targetInfo, station: dest });
+        }
       }
     }
     // reachable by foot
     const walkRecords = alasql(`SELECT * FROM ${getDbTableName(target, Table.Walk)} WHERE start_station = "${cur.station}"`) as WalkTableRecord[];
     for (const record of walkRecords) {
       const totalWalkTime: number = cur.totalWalkTime + +record.walk_time;
-      if (totalWalkTime >= 10) continue;
-      queue.push({
-        station: record.next_station,
-        arrivalTime: new Date(cur.arrivalTime.getTime() + record.walk_time * 60 * 1000),
-        totalWalkTime: totalWalkTime,
-        arrivingFrom: record.start_station,
-        departureTime: cur.arrivalTime,
-        routeDesc: "W",
-        routeShortName: "Walk",
-      });
+      if (totalWalkTime >= 30) continue;
+      const dest = record.next_station;
+      const arrivalTime = new Date(cur.arrivalTime.getTime() + record.walk_time * 60 * 1000);
+      if (!earliest.get(dest) || arrivalTime < earliest.get(dest)!.arrivalTime) {
+        const targetInfo: TargetInfo = {
+          arrivalTime: arrivalTime,
+          totalWalkTime: cur.totalWalkTime,
+          arrivingFrom: record.start_station,
+          departureTime: cur.arrivalTime,
+          routeDesc: "W",
+          routeShortName: "Walk",
+        };
+        earliest.set(dest, targetInfo);
+        queue.push({ ...targetInfo, station: dest });
+      }
     }
-    cur = queue.dequeue();
   }
   return earliest;
 }
@@ -377,7 +383,7 @@ export function pathInfoHTML(dataset: Dataset, earliest: Map<Station, TargetInfo
         infoRow.append(to_);
 
         let via = document.createElement("td");
-        via.append(step.routeDesc);
+        via.append(step.routeDesc + ' ' + step.routeShortName);
         infoRow.append(via);
 
         let arrive = document.createElement("td");

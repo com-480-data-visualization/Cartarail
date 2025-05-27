@@ -172,7 +172,7 @@ export function drawCartogram(config: Config,
             if ((0 > s.xGeo) || (s.xGeo >= width) || (0 > s.yGeo) || (s.yGeo >= height)) {
                 continue;
             }
-            if ((-20 > s.x) || (s.x >= width + 20) || (-20 > s.y) || (s.y >= height + 20)) {
+            if ((-30 > s.x) || (s.x >= width + 30) || (-30 > s.y) || (s.y >= height + 30)) {
                 continue;
             }
             srcs.push([s.xGeo, s.yGeo]);
@@ -277,7 +277,7 @@ export const basemapNational: BasemapReference = {
     originalHeight: 1293,
 };
 
-const configNational: Config = { br: basemapNational, speed: 70 };
+const configNational: Config = { br: basemapNational, speed: 50 };
 
 export const configs: DatasetKeyed<Config> =
     { "lausanne": configLausanne, "train": configNational };

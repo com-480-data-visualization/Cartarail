@@ -383,7 +383,7 @@ export function pathInfoHTML(dataset: Dataset, earliest: Map<Station, TargetInfo
         infoRow.append(to_);
 
         let via = document.createElement("td");
-        via.append(step.routeDesc + ' ' + step.routeShortName);
+        via.append(step.routeShortName);
         infoRow.append(via);
 
         let arrive = document.createElement("td");

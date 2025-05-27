@@ -102,28 +102,22 @@ img.placeholder {
 }
 
 #finder-box thead th {
-    text-align: left;
     font-weight: bold;
+    padding-bottom: 0.5em;
+    vertical-align: bottom;
 }
 
 #finder-box thead {
     margin-bottom: 0.5em;
 }
 
-#finder-box th, td {
+#finder-box :is(th, td) {
     padding: 0.1em 0.5em;
-}
-
-#finder-box th {
-    padding-bottom: 0.5em;
+    text-align: left;
 }
 
 #finder-box td {
     vertical-align: top;
-}
-
-#finder-box td:nth-child(3) {
-    text-align: center;
 }
 
 #finder-box tr:last-child td:nth-child(2) {

@@ -6,7 +6,7 @@
 | GUAN Yawen | 353856 |
 | PINAZZA Alexandre | 282395 |
 
-📍[website](https://com-480-data-visualization.github.io/Cartarail/) •  [Setup](#Setup) • [Milestone 1](#milestone-1) • [Milestone 2](#milestone-2) • [Milestone 3](#milestone-3)
+📍[Website](https://com-480-data-visualization.github.io/Cartarail/) •  [Setup](#Setup) • [Milestone 1](#milestone-1) • [Milestone 2](#milestone-2) • [Milestone 3](#milestone-3)
 
 ## Setup
 

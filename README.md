@@ -6,7 +6,57 @@
 | GUAN Yawen | 353856 |
 | PINAZZA Alexandre | 282395 |
 
-[Milestone 1](#milestone-1) • [Milestone 2](#milestone-2) • [Milestone 3](#milestone-3)
+[Setup](#Setup) • [Milestone 1](#milestone-1) • [Milestone 2](#milestone-2) • [Milestone 3](#milestone-3)
+
+## Setup
+
+### Get started
+
+- install [node.js](https://nodejs.org)
+
+- `cd` into the `www` directory
+
+- run `npm install` to install dependencies
+
+- For local development: run `npm run dev`. You should see output like:
+
+  ```bash
+    VITE v6.2.6  ready in 126 ms
+
+    ➜  Local:   http://localhost:5173/
+    ➜  Network: use --host to expose
+    ➜  press h + enter to show help
+  ```
+
+- Generate static files and deploy to github pages:
+
+  ```bash
+  npm run build
+  npm run deploy
+  ```
+
+### Project structure
+
+```bash
+.
+├── assets
+├── data
+│   └── preprocessed
+├── notebooks # jupyter notebooks for data preprocessing
+├── README.md
+├── scripts # python scripts for data preprocessing
+└── www # frontend
+    ├── dist
+    ├── index.html
+    ├── node_modules
+    ├── package.json
+    ├── package-lock.json
+    ├── public
+    ├── src
+    ├── tsconfig.json
+    └── vite.config.ts
+
+```
 
 ## Milestone 1 (21st March, 5pm)
 

@@ -6,9 +6,32 @@
 | GUAN Yawen | 353856 |
 | PINAZZA Alexandre | 282395 |
 
-[Setup](#Setup) • [Milestone 1](#milestone-1) • [Milestone 2](#milestone-2) • [Milestone 3](#milestone-3)
+📍[website](https://com-480-data-visualization.github.io/Cartarail/) •  [Setup](#Setup) • [Milestone 1](#milestone-1) • [Milestone 2](#milestone-2) • [Milestone 3](#milestone-3)
 
 ## Setup
+
+### Project structure
+
+```bash
+.
+├── assets
+├── data
+│   └── preprocessed
+├── notebooks # jupyter notebooks for data preprocessing
+├── README.md
+├── scripts # python scripts for data preprocessing
+└── www # frontend
+    ├── dist
+    ├── index.html
+    ├── node_modules
+    ├── package.json
+    ├── package-lock.json
+    ├── public
+    ├── src
+    ├── tsconfig.json
+    └── vite.config.ts
+
+```
 
 ### Get started
 
@@ -34,29 +57,6 @@
   npm run build
   npm run deploy
   ```
-
-### Project structure
-
-```bash
-.
-├── assets
-├── data
-│   └── preprocessed
-├── notebooks # jupyter notebooks for data preprocessing
-├── README.md
-├── scripts # python scripts for data preprocessing
-└── www # frontend
-    ├── dist
-    ├── index.html
-    ├── node_modules
-    ├── package.json
-    ├── package-lock.json
-    ├── public
-    ├── src
-    ├── tsconfig.json
-    └── vite.config.ts
-
-```
 
 ## Milestone 1 (21st March, 5pm)
 

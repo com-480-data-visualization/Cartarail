@@ -159,8 +159,10 @@ async function loadWalkCSVToDB(target: Dataset) {
   }
 
   const name = getDbTableName(target, Table.Walk);
-  alasql(`CREATE TABLE ${name}`);
-  alasql.tables[name].data = parsed.data;
+  alasql(`CREATE TABLE ${name} (start_station STRING, next_station STRING, walk_time DOUBLE)`);
+  alasql.tables[name].data = parsed.data.map(row =>
+    ({ ...row,
+        walk_time: Number(row.walk_time) }));
 
   loaded[target].set(Table.Walk, true);
   console.log(`${target} ${Table.Walk}.csv is loaded into memory.`);
@@ -275,14 +277,14 @@ export async function dijkstra(target: Dataset, startStation: Station, startTime
     // reachable by foot
     const walkRecords = alasql(`SELECT * FROM ${getDbTableName(target, Table.Walk)} WHERE start_station = "${cur.station}"`) as WalkTableRecord[];
     for (const record of walkRecords) {
-      const totalWalkTime: number = cur.totalWalkTime + +record.walk_time;
+      const totalWalkTime: number = cur.totalWalkTime + record.walk_time;
       if (totalWalkTime >= 30) continue;
       const dest = record.next_station;
       const arrivalTime = new Date(cur.arrivalTime.getTime() + record.walk_time * 60 * 1000);
       if (!earliest.get(dest) || arrivalTime < earliest.get(dest)!.arrivalTime) {
         const targetInfo: TargetInfo = {
           arrivalTime: arrivalTime,
-          totalWalkTime: cur.totalWalkTime,
+          totalWalkTime: totalWalkTime,
           arrivingFrom: record.start_station,
           departureTime: cur.arrivalTime,
           routeDesc: "W",

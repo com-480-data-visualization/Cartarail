@@ -249,7 +249,8 @@ export async function dijkstra(target: Dataset, startStation: Station, startTime
     // reachable by public transportation
     const tranRecords = alasql(`SELECT * FROM ${getDbTableName(target, Table.Transport)} WHERE start_station = "${cur.station}"`) as TransportTableRecord[];
     for (const record of tranRecords) {
-      let at = cur.arrivalTime; if (record.route_desc != cur.routeDesc || record.route_short_name != cur.routeShortName) {
+      let at = cur.arrivalTime;
+      if (cur.station != startStation && (cur.routeDesc != "W") && (record.route_desc != cur.routeDesc || record.route_short_name != cur.routeShortName)) {
         // change routes within the station (takes: 3 mins)
         at = new Date(at.getTime() + 3 * 60 * 1000); // ms
       }
